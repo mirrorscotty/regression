@@ -7,7 +7,13 @@
 #include "fitnlm.h"
 #include "matrix.h"
 
-/* Calculate the J matrix used in the equations */
+/**
+ * Calculate the J matrix used in the equations
+ * @param model Model equation to fit to
+ * @param x Column vector of independent variable values
+ * @param beta Column matrix of fitting parameters
+ * @returns Jacobian matrix
+ */
 matrix *CalcJacobian(double (*model)(double x, matrix *beta), matrix *x, matrix *beta)
 {
     double h = 1e-10, /* Values used for numeric differentiation */
@@ -45,7 +51,13 @@ matrix *CalcJacobian(double (*model)(double x, matrix *beta), matrix *x, matrix 
     return J;
 }
 
-/* Calculate the difference between the predicted value and the actual value */
+/**
+ * Calculate the difference between the predicted value and the actual value
+ * @param model Model equation to fit to
+ * @param x Column vector of indep values
+ * @param y Column vector of dependent values
+ * @param beta Column vector of fitting parameters
+ */
 matrix* CalcDy(double (*model)(double x, matrix *beta), matrix *x, matrix *y, matrix* beta)
 {
     matrix* dy;
@@ -63,11 +75,13 @@ matrix* CalcDy(double (*model)(double x, matrix *beta), matrix *x, matrix *y, ma
     return dy;
 }
 
-/* Fit the given model to the x-y data provided
- * model: Equation to fit
- * x: column matrix of x values
- * y: column matrix of y values
- * beta0: matrix of coefficients for the model
+/**
+ * Fit the given model to the x-y data provided
+ * @param model Equation to fit
+ * @param x Column matrix of x values
+ * @param y Column matrix of y values
+ * @param beta0: Matrix of coefficients for the model
+ * @returns Column vector of fitted coefficients
  */
 matrix* fitnlm(double (*model)(double x, matrix *beta), matrix *x, matrix *y, matrix *beta0)
 {
