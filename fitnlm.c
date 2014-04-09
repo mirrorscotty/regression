@@ -1,4 +1,7 @@
-/* Non-linear least squares analysis using the Gauss-Newton algorithm */
+/**
+ * @file fitnlm.c
+ * Non-linear least squares analysis using the Gauss-Newton algorithm.
+ */
 
 #include <math.h>
 #include <stdlib.h>
@@ -9,6 +12,9 @@
 
 /**
  * Calculate the J matrix used in the equations
+ * \f[
+ * J_{ij} = -\frac{\partial f_i}{\partial \beta_j}
+ * \f]
  * @param model Model equation to fit to
  * @param x Column vector of independent variable values
  * @param beta Column matrix of fitting parameters
@@ -39,6 +45,7 @@ matrix *CalcJacobian(double (*model)(double x, matrix *beta), matrix *x, matrix 
             /* Calculate the derivative of the model with respect to each
              * parameter. Each row is one x value. */
             Jij = (model(xi, betah[j]) - model(xi, beta)) / h;
+            /* Save each Jij value into the J matrix */
             setval(J, Jij, i, j);
         }
     }
@@ -53,6 +60,9 @@ matrix *CalcJacobian(double (*model)(double x, matrix *beta), matrix *x, matrix 
 
 /**
  * Calculate the difference between the predicted value and the actual value
+ * \f[
+ * \Delta y_i = y_i - f(x_i, \underline{\beta})
+ * \f]
  * @param model Model equation to fit to
  * @param x Column vector of indep values
  * @param y Column vector of dependent values
@@ -77,6 +87,9 @@ matrix* CalcDy(double (*model)(double x, matrix *beta), matrix *x, matrix *y, ma
 
 /**
  * Fit the given model to the x-y data provided
+ * \f[
+ * J_{ij}J_{is} \Delta\beta_{s} = J_{ij} \Delta y_i
+ * \f]
  * @param model Equation to fit
  * @param x Column matrix of x values
  * @param y Column matrix of y values
@@ -102,6 +115,7 @@ matrix* fitnlm(double (*model)(double x, matrix *beta), matrix *x, matrix *y, ma
     /* Set dbeta to NULL so that the program doesn't segfault */
     dbeta = NULL;
 
+    /* Loop until the change between iterations is less than the tolerance */
     do {
         /* Only delete dbeta if there's something to delete */
         if(dbeta)

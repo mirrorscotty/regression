@@ -22,6 +22,9 @@ gab: fitnlm.o gab.o matrix
 kF: fitnlm.o kf.o matrix
 	$(CC) $(CFLAGS) -o kF kf.o fitnlm.o matrix/*.o 
 
+doc: Doxyfile
+	doxygen Doxyfile
+
 clean:
-	rm *.o matrix/*.o kF gab
+	rm -rf *.o matrix/*.o doc kF gab
 
