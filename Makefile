@@ -7,11 +7,12 @@ VPATH=matrix material-data/pasta programs
 all: kF gab fitdiff
 
 matrix.a:
-	$(MAKE) -C matrix
+	$(MAKE) -C matrix matrix.a
 	cp matrix/matrix.a .
 
-material-data.a:
-	$(MAKE) -C material-data
+material-data.a: matrix.a
+	cp matrix.a material-data
+	$(MAKE) -C material-data material-data.a
 	cp material-data/material-data.a .
 
 kf.o:
@@ -20,7 +21,7 @@ gab.o:
 
 fitdiff.o: diffusivity.h isotherms.h constants.h
 
-fitnlm.o: fitnlm.h
+fitnlm.o: regress.h
 
 regress.o: regress.h
 
@@ -37,6 +38,6 @@ doc: Doxyfile
 	doxygen Doxyfile
 
 clean:
-	rm -rf *.o doc kF gab fitdiff
+	rm -rf *.o *.a doc kF gab fitdiff
 	$(MAKE) -C material-data clean
 	$(MAKE) -C matrix clean

@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "fitnlm.h"
+#include "regress.h"
 #include "matrix.h"
 
 /**

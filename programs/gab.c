@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include "matrix.h"
-#include "fitnlm.h"
+#include "regress.h"
 
 /**
  * GAB Equation suitable for the fitnlm function.
