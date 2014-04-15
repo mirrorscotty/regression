@@ -1,15 +1,18 @@
 CC=gcc
-CFLAGS=-Imatrix -Imaterial-data/pasta -lm -ggdb
-VPATH=matrix material-data/pasta
-.PHONY: matrix pasta
+CFLAGS=-Imatrix -Imaterial-data/pasta -I. -ggdb
+LDFLAGS=-lm
+VPATH=matrix material-data/pasta programs
+.PHONY:
 
 all: kF gab fitdiff
 
-matrix:
+matrix.a:
 	$(MAKE) -C matrix
+	cp matrix/matrix.a .
 
-pasta:
-	$(MAKE) -C material-data/pasta
+material-data.a:
+	$(MAKE) -C material-data
+	cp material-data/material-data.a .
 
 kf.o:
 
@@ -21,18 +24,19 @@ fitnlm.o: fitnlm.h
 
 regress.o: regress.h
 
-gab: fitnlm.o gab.o matrix
-	$(CC) $(CFLAGS) -o gab gab.o fitnlm.o matrix/*.o
+gab: fitnlm.o gab.o matrix.a
+	$(CC) $(CFLAGS) -o $@ $? $(LDFLAGS)
 
-kF: fitnlm.o kf.o matrix
-	$(CC) $(CFLAGS) -o kF kf.o fitnlm.o matrix/*.o 
+kF: fitnlm.o kf.o matrix.a
+	$(CC) $(CFLAGS) -o $@ $? $(LDFLAGS)
 
-fitdiff: fitdiff.o regress.o matrix pasta
-	$(CC) $(CFLAGS) -o fitdiff fitdiff.o regress.o matrix/*.o material-data/pasta/binding.o material-data/pasta/diffusivity.o material-data/pasta/isotherms.o material-data/pasta/choi-okos.o material-data/pasta/composition.o material-data/pasta/gas.o material-data/pasta/fluid.o
+fitdiff: fitdiff.o regress.o matrix.a material-data.a
+	$(CC) $(CFLAGS) -o $@ $? $(LDFLAGS)
 
 doc: Doxyfile
 	doxygen Doxyfile
 
 clean:
-	rm -rf *.o matrix/*.o doc kF gab fitdiff
-
+	rm -rf *.o doc kF gab fitdiff
+	$(MAKE) -C material-data clean
+	$(MAKE) -C matrix clean

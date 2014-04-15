@@ -2,6 +2,7 @@
 #include <math.h>
 
 #include "fitnlm.h"
+#include "regress.h"
 
 #include "matrix.h"
 
