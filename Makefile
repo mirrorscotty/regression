@@ -2,7 +2,6 @@ CC=gcc
 CFLAGS=-Imatrix -Imaterial-data/pasta -I. -ggdb
 LDFLAGS=-lm
 VPATH=matrix material-data/pasta programs
-.PHONY:
 
 all: kF gab fitdiff
 
@@ -26,13 +25,13 @@ fitnlm.o: regress.h
 regress.o: regress.h
 
 gab: fitnlm.o gab.o matrix.a
-	$(CC) $(CFLAGS) -o $@ $? $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-kF: fitnlm.o kf.o matrix.a
-	$(CC) $(CFLAGS) -o $@ $? $(LDFLAGS)
+kF: fitnlm.o regress.o kf.o matrix.a
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 fitdiff: fitdiff.o regress.o matrix.a material-data.a
-	$(CC) $(CFLAGS) -o $@ $? $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 doc: Doxyfile
 	doxygen Doxyfile

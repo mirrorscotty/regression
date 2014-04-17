@@ -1,3 +1,10 @@
+/**
+ * @file fitdiff.c
+ * Simple program to calculate tortuosity from diffusivity data, assuming that
+ * the diffusivity constant can be written in terms of porosity, tortuosity,
+ * the self-diffusion coefficient of water, and the binding energy of water.
+ */
+
 #include <stdio.h>
 #include <math.h>
 
@@ -9,6 +16,13 @@
 #include "constants.h"
 #include "isotherms.h"
 
+/**
+ * Modified version of the diffusion model from the Handbook of Food Engineering.
+ * This function is set up for use with fitnlm().
+ * @param Xdb Moisture content [kg/kg db]
+ * @param beta A 1x1 matrix containing the value of tau (tortuosity) [-]
+ * @returns effective diffusivity
+ */
 double DiffModel(double Xdb, matrix *beta)
 {
     oswin *dat;
@@ -31,6 +45,12 @@ double DiffModel(double Xdb, matrix *beta)
     return Deff;
 }
 
+/**
+ * Calculate the X matrix for use in the regress function.
+ * @param Xdb Moisture content [kg/kg db]
+ * @param T Temperature [K]
+ * @returns Matrix for input into regress
+ */
 double CalcX(double Xdb, double T)
 {
     oswin *dat;
@@ -50,6 +70,9 @@ double CalcX(double Xdb, double T)
     return X;
 }
 
+/**
+ * Load in a data file and calculate tortuosity.
+ */
 int main(int argc, char *argv[])
 {
     matrix *data, *Xdb, *D, *beta, *beta0, *X;

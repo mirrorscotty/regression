@@ -7,6 +7,7 @@
 #include "regress.h"
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define CONSTX0 0.3168046007
 #define CONSTXe 0.1123
@@ -197,16 +198,127 @@ void fitkf(char* filename)
     return;
 }
 
+/**
+ * Calculate the equilibrium moisture content. This function determines the best
+ * value of Xe to make a plot of \f$\ln\frac{X-X_e}{X_0-X_e}\f$ vs time linear.
+ * In order to do this, it fits the data to the equation \f$y = a t + b\f$, where
+ * \f$y = \ln(X-X_e)\f$ and \f$b = \ln(X_0-X_e)\f$, and then solves the equation
+ * \f$F(X_e) = b - \ln(X_0-X_e) = 0\f$ using Newton's method.
+ *
+ * @param t Column matrix containing time during drying [s]
+ * @param Xdb Column matrix of moisture content [kg/kg db]
+ * @param Xe0 Initial guess for equilibrium moisture content.
+ * @returns Equilibrium moisture content [kg/kg db]
+ */
+double CalcXe(matrix *t, matrix *Xdb, double Xe0)
+{
+    double f, df, /* Function values and derivatives */
+           b, /* Fitting parameters. Only the constant matters */
+           tol = 1e-10, /* Tolerance for Newton's method */
+           Xe = Xe0, /* Set Xe to the initial guess */
+           Xep, /* Previous guess */
+           X0; /* Initial moisture content */
+    matrix *beta, /* Matrix of fitting values */
+           *y; /* Set equal to ln(X - Xe) */
+    int i, /* Loop index */
+        iter = 0;
+
+    /* Set the initial moisture content */
+    X0 = val(Xdb, 0, 0);
+
+    do {
+        /* Calculate b */
+        y = CreateMatrix(nRows(Xdb), 1);
+        for(i=0; i<nRows(Xdb); i++)
+            setval(y, log(val(Xdb, i, 0) - Xe), i, 0);
+        beta = polyfit(t, y, 1);
+        b = val(beta, 0, 0);
+
+        /* Calculate f and df */
+        f = b - log(X0 - Xe);
+        df = 1/(X0 - Xe);
+
+        /* Calculate the new value of Xe */
+        Xep = Xe;
+        Xe = Xe - f/df;
+
+        /* Clean up */
+        DestroyMatrix(y);
+        DestroyMatrix(beta);
+
+        /* Keep track of how many iterations we've gone through */
+        iter++;
+
+        /* Print out the current value */
+        printf("Xe = %g\r", Xe);
+    } while( fabs(Xe - Xep) > tol ); /* Check our value */
+
+    printf("Solution converged after %d iterations.\n", iter);
+
+    return Xe;
+}
+
+matrix* LoadIGASorpTime(char *file)
+{
+    int row0 = 17, /* First row that contains numbers */
+        col = 0, /* Get mass data from column 1 */
+        i; /* Loop index */
+    matrix *data, *min, *t;
+
+    data = mtxloadcsv(file, row0);
+    min = ExtractColumn(data, col);
+    t = CreateMatrix(nRows(min), 1);
+
+    for(i=0; i<nRows(min); i++)
+        setval(t, val(min, i, 0)*60, i, 0);
+
+    DestroyMatrix(min);
+    DestroyMatrix(data);
+    
+    return t;
+}
+
+matrix* LoadIGASorpXdb(char *file, double Xdry)
+{
+    int row0 = 17, /* First row that contains numbers */
+        col = 1, /* Get mass data from column 2 */
+        i; /* Loop index */
+    matrix *data, *M, *Xdb;
+
+    data = mtxloadcsv(file, row0);
+    M = ExtractColumn(data, col);
+    Xdb = CreateMatrix(nRows(M), 1);
+
+    for(i=0; i<nRows(M); i++)
+        setval(Xdb, (val(M, i, 0)-Xdry)/Xdry, i, 0);
+
+    DestroyMatrix(M);
+    DestroyMatrix(data);
+    
+    return Xdb;
+}
+
 int main(int argc, char *argv[])
 {
+    matrix *t, *X;
+    double Xe;
+
     /* If a filename isn't supplied, spit out usage info and exit */
-    if(argc != 2) {
+    if(argc != 3) {
         puts("Usage:");
-        puts("kF <datafile.csv>");
+        puts("kF <datafile.csv> <Xdry>");
+        puts("datafile.csv is the file to load data from.");
+        puts("Xdry is the moisture content of the dry sample.");
         return 0;
     }
 
-    calckf(argv[1]);
-    fitkf(argv[1]);
+    t = LoadIGASorpTime(argv[1]);
+    X = LoadIGASorpXdb(argv[1], atof(argv[2]));
+    
+    Xe = CalcXe(t, X, 0);
+    printf("Xe = %g\n", Xe);
+
+    //calckf(argv[1]);
+    //fitkf(argv[1]);
 }
 
