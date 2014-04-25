@@ -45,34 +45,36 @@ double fitsubset(matrix *x, matrix *y, int rowstart, int rowend)
  * @param t Column matrix of times [s]
  * @param Xdb column matrix of moisture contents [kg/kg db]
  * @param Xe Equilibrium moisture content [kg/kg db]
- * @param file Filename to save the data to
+ * @returns Matrix of values. Col 1: Time [s], Col 2: Moisture Content 
+ *      [kg/kg db], Col 3: kF [1/s]
  */
-void calckf(matrix *t, matrix *Xdb, double Xe, char *file)
+matrix* calckf(matrix *t, matrix *Xdb, double Xe)
 {
     matrix *kF, *data1, *data2;
     int tcol = 1, /* Column to get time from (in sec) */
         xdbcol = 4, /* Column for Xdb */
         i; /* loop index */
-    double X0 = val(Xdb, 0, 0);
+    double X0 = val(Xdb, 0, 0),
+           beta = BETA0;
 
     /* Make a matrix to store the resulting values in */
     kF = CreateMatrix(nRows(t), 1);
 
     /* Calculate kF at each point directly using Newton's method */
-    for(i=0; i<nRows(kF); i++)
-        setval(kF, CrankkF(val(t, i, 0), val(Xdb, i, 0), X0, Xe), i, 0);
+    for(i=0; i<nRows(kF); i++) {
+        setval(kF, CrankkF(val(t, i, 0), val(Xdb, i, 0), X0, Xe, beta), i, 0);
+        beta = val(kF, i, 0);
+    }
 
     /* Print the results to a file */
     data1 = AugmentMatrix(t, Xdb);
     data2 = AugmentMatrix(data1, kF);
-    mtxprntfile(data2, file);
 
     /* Clean up */
     DestroyMatrix(kF);
     DestroyMatrix(data1);
-    DestroyMatrix(data2);
     
-    return;
+    return data2;
 }
 
 /**
@@ -83,8 +85,10 @@ void calckf(matrix *t, matrix *Xdb, double Xe, char *file)
  * @param Xdb Column matrix of moisture contents [kg/kg db]
  * @param Xe Equilibrum moisture content [kg/kg db]
  * @param file Filename to save the data to
+ * @returns Matrix of values. Col 1: Time [s], Col 2: Moisture Content 
+ *      [kg/kg db], Col 3: kF [1/s]
  */
-void calckfstep(matrix *t, matrix *Xdb, double Xe, char *file)
+matrix* calckfstep(matrix *t, matrix *Xdb, double Xe)
 {
     matrix *kF, *data1, *data2;
     int tcol = 1, /* Column to get time from (in sec) */
@@ -103,7 +107,7 @@ void calckfstep(matrix *t, matrix *Xdb, double Xe, char *file)
     
     /* Calculate all the kF values */
     for(i=0; i<nRows(kF); i++) {
-        kFi = CrankkF(dt, val(Xdb, i, 0), X0, Xe);
+        kFi = CrankkF(dt, val(Xdb, i, 0), X0, Xe, BETA0);
         setval(kF, kFi, i, 0);
         X0 = val(Xdb, i, 0);
     }
@@ -111,14 +115,12 @@ void calckfstep(matrix *t, matrix *Xdb, double Xe, char *file)
     /* Output data */
     data1 = AugmentMatrix(t, Xdb);
     data2 = AugmentMatrix(data1, kF);
-    mtxprntfile(data2, file);
     
     /* Clean up */
     DestroyMatrix(kF);
     DestroyMatrix(data1);
-    DestroyMatrix(data2);
 
-    return;
+    return data2;
 }
 
 /**
@@ -128,8 +130,10 @@ void calckfstep(matrix *t, matrix *Xdb, double Xe, char *file)
  * @param t Column matrix of time values [s]
  * @param Xdb Column matrix of moisture contents [kg/kg db]
  * @param file Filename to save the data to
+ * @returns Matrix of values. Col 1: Time [s], Col 2: Moisture Content 
+ *      [kg/kg db], Col 3: kF [1/s]
  */
-void fitkf(matrix *t, matrix *Xdb, char *file)
+matrix* fitkf(matrix *t, matrix *Xdb)
 {
     matrix *kf;
     int tcol = 1, /* Column to get time from (in sec) */
@@ -156,14 +160,10 @@ void fitkf(matrix *t, matrix *Xdb, char *file)
         setval(kf, fitsubset(t, Xdb, rowstart+i*chunksize, rowstart+(i+1)*chunksize), i, 1);
     }
 
-    /* Output the data to kF.csv */
-    mtxprntfile(kf, file);
-
     /* Clean up */
-    DestroyMatrix(kf);
     DestroyMatrix(Xdb);
 
-    return;
+    return kf;
 }
 
 

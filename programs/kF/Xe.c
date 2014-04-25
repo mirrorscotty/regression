@@ -16,7 +16,7 @@
  * @param Xe0 Initial guess for equilibrium moisture content.
  * @returns Equilibrium moisture content [kg/kg db]
  */
-double CalcXe(matrix *t, matrix *Xdb, double Xe0)
+double CalcXe(int initial, matrix *t, matrix *Xdb, double Xe0)
 {
     double f, df, /* Function values and derivatives */
            b, /* Fitting parameters. Only the constant matters */
@@ -25,21 +25,33 @@ double CalcXe(matrix *t, matrix *Xdb, double Xe0)
            Xep, /* Previous guess */
            X0; /* Initial moisture content */
     matrix *beta, /* Matrix of fitting values */
-           *y; /* Set equal to ln(X - Xe) */
+           *y, /* Set equal to ln(X - Xe) */
+           *Xadj, 
+           *tadj;
     int i, /* Loop index */
         iter = 0; /* Current iteration */
 
     /* Set the initial moisture content */
-    X0 = val(Xdb, 0, 0);
+    X0 = val(Xdb, initial, 0);
 
+    /* Make smaller matricies that contain only the "good" data. */
+    tadj = CreateMatrix(nRows(Xdb) - initial, 1);
+    Xadj = CreateMatrix(nRows(Xdb) - initial, 1);
+
+    for(i=initial; i<nRows(t); i++) {
+        setval(tadj, val(t, i, 0), i-initial, 0);
+        setval(Xadj, val(Xdb, i, 0), i-initial, 0);
+    }
+
+    /* Actually find Xe */
     do {
         /* Make a y matrix containing ln(Xdb - Xe) */
-        y = CreateMatrix(nRows(Xdb), 1);
-        for(i=0; i<nRows(Xdb); i++)
-            setval(y, log(val(Xdb, i, 0) - Xe), i, 0);
+        y = CreateMatrix(nRows(Xadj), 1);
+        for(i=0; i<nRows(Xadj); i++)
+            setval(y, log(val(Xadj, i, 0) - Xe), i, 0);
 
         /* Calculate b */
-        beta = polyfit(t, y, 1);
+        beta = polyfit(tadj, y, 1);
         b = val(beta, 0, 0);
 
         /* Calculate f and df */

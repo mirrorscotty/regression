@@ -50,9 +50,9 @@ double CrankEquation(double kf, double t, double X0, double Xe, int nterms)
  * @param Xe Equilibrium moisture content [kg/kg db]
  * @returns kF value [1/s]
  */
-double CrankkF(double t, double X, double X0, double Xe)
+double CrankkF(double t, double X, double X0, double Xe, double beta0)
 {
-    double kf = BETA0, /* Initial guess for kF */
+    double kf = beta0, /* Initial guess for kF */
            kfp = 0, /* kF from the previous loop iteration. */
            f, /* Value of the residual */
            df, /* Derivative of f */

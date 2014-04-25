@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Imatrix -Imaterial-data/pasta -I. -ggdb
 LDFLAGS=-lm
-VPATH=matrix material-data/pasta programs programs/kF
+VPATH=matrix material-data material-data/pasta programs programs/kF
 
 all: kF gab fitdiff
 
@@ -10,7 +10,7 @@ matrix.a:
 	cp matrix/matrix.a .
 
 material-data.a: matrix.a
-	cp matrix.a material-data
+	cp matrix/matrix.a material-data
 	$(MAKE) -C material-data material-data.a
 	cp material-data/material-data.a .
 
@@ -21,6 +21,8 @@ crank.o: kf.h
 io.o: kf.h
 
 Xe.o: kf.h
+
+De.o: kf.h
 
 kFmain.o: kf.h
 
@@ -35,7 +37,7 @@ regress.o: regress.h
 gab: fitnlm.o gab.o matrix.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-kF: calc.o crank.o io.o Xe.o kFmain.o fitnlm.o regress.o matrix.a 
+kF: calc.o crank.o io.o Xe.o kFmain.o fitnlm.o regress.o De.o matrix.a material-data.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 fitdiff: fitdiff.o regress.o matrix.a material-data.a

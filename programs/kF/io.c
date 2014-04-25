@@ -66,4 +66,29 @@ matrix* LoadIGASorpXdb(char *file, double Mdry)
     return Xdb;
 }
 
+/**
+ * Load the time data from an IGASorp data file. The file needs to be converted
+ * to a CSV file before loading. The header at the top of the file is ignored,
+ * but the values must be separated by commas.
+ * @param file The name of the file to open.
+ * @returns A column matrix of times [s]
+ */
+matrix* LoadIGASorpRH(char *file)
+{
+    int row0 = 17, /* First row that contains numbers */
+        col = 2, /* Get humidity data from column 3 */
+        i; /* Loop index */
+    matrix *data, /* Raw data loaded from the file */
+           *RH;
 
+    /* Load the data file and extract the column containing time */
+    data = mtxloadcsv(file, row0);
+    RH = ExtractColumn(data, col);
+
+    /* Convert from minutes to seconds */
+
+    /* Clean up */
+    DestroyMatrix(data);
+    
+    return RH;
+}
