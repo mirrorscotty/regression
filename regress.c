@@ -74,4 +74,53 @@ matrix* polyfit(matrix* x, matrix* y, int order)
 
     return beta;
 }
- 
+
+/**
+ * Calculate the coefficient of determination. This works only for output from
+ * polyfit, or if the beta matrix supplied is of the same form. The \f$ R^2\f$
+ * value is calculated using the following formula:
+ * \f[
+ * R^2 = 1-\frac{SSres}{SStot}
+ * \f]
+ * where \f$ SSres = \sum_0^N (y_i - f(x_i))^2 \f$ and
+ * \f$ SStot = \sum_0^N (y_i - \overline{y})^2 \f$. The ybar value is the
+ * average of the supplied y values.
+ * @param x Column matrix of x values
+ * @param y Column matrix of y values
+ * @param beta Column matrix of fitting parameters
+ * @returns R^2
+ *
+ * @see polyfit
+ */
+double rsquared(matrix* x, matrix* y, matrix *beta)
+{
+    double ybar = 0, /* Average y value */
+           SStot = 0, /* Total sum of squares */
+           SSres = 0, /* Residual sum of squares */
+           f; /* Model value at xi */
+    int i, j; /* Loop indicies */
+
+    /* Calculate the average y value */
+    for(i=0; i<nRows(y); i++)
+        ybar += val(y, i, 0);
+    ybar = ybar/nRows(y);
+
+    /* Calculate the total sum of squares */
+    for(i=0; i<nRows(y); i++)
+        SStot += pow(val(y, i, 0) - ybar, 2);
+
+    /* Calculate the residual sum of squares */
+    for(i=0; i<nRows(y); i++) {
+        /* Find the function value at xi. This assumes the function is of the
+         * form f(x) = b0 + b1*x + b2*x^2 + ... + bn*X^n */
+        f = 0;
+        for(j=0; j<nRows(beta); j++)
+            f += val(beta, j, 0) * pow(val(x, i, 0), j);
+
+        SSres += pow(val(y, i, 0) - f, 2);
+    }
+
+    /* R^2 = 1-SSres/SStot */
+    return 1-SSres/SStot;
+}
+
