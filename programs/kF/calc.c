@@ -54,7 +54,8 @@ matrix* calckf(matrix *t, matrix *Xdb, double Xe)
     int tcol = 1, /* Column to get time from (in sec) */
         xdbcol = 4, /* Column for Xdb */
         i; /* loop index */
-    double X0 = val(Xdb, 0, 0),
+    double kFi,
+           X0 = val(Xdb, 0, 0),
            beta = BETA0;
 
     /* Make a matrix to store the resulting values in */
@@ -62,8 +63,10 @@ matrix* calckf(matrix *t, matrix *Xdb, double Xe)
 
     /* Calculate kF at each point directly using Newton's method */
     for(i=0; i<nRows(kF); i++) {
-        setval(kF, CrankkF(val(t, i, 0), val(Xdb, i, 0), X0, Xe, beta), i, 0);
-        beta = val(kF, i, 0);
+        beta = BETA0;
+        kFi = CrankkF(val(t, i, 0), val(Xdb, i, 0), X0, Xe, beta);
+        setval(kF, kFi, i, 0);
+        //beta = val(kF, i, 0);
     }
 
     /* Print the results to a file */

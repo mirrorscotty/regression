@@ -6,7 +6,7 @@
 
 #define CONSTX0 0
 #define CONSTXe 18.261700
-#define CONSTnterms 50
+#define CONSTnterms 50 
 #define BETA0 1e-4
 
 double CrankEquation(double, double, double, double, int);
@@ -18,6 +18,8 @@ matrix* LoadIGASorpXdb(char*, double);
 matrix* LoadIGASorpRH(char*);
 
 double CalcXe(int, matrix*, matrix*, double);
+double NCalcXe(int, matrix*, matrix*, double);
+double CalcXeIt(int, matrix*, matrix*, double);
 
 double fitsubset(matrix*, matrix*, int, int);
 matrix* calckf(matrix*, matrix*, double);
