@@ -58,7 +58,6 @@ double CalcX(double Xdb, double T)
 
     double X,
            Dself = SelfDiffWater(T),
-           phi = POROSITY,
            K = 1032.558, /* Source: Xiong et al. (1991) */
            Eb = BindingEnergyOswin(dat, Xdb, T),
            R = 8.314; /* Gas Constant */
@@ -75,7 +74,7 @@ double CalcX(double Xdb, double T)
  */
 int main(int argc, char *argv[])
 {
-    matrix *data, *Xdb, *D, *beta, *beta0, *X;
+    matrix *data, *Xdb, *D, *beta, *X;
     int dcol = 1, /* Column to get diffusivity from */
         xdbcol = 0, /* Column for Xdb */
         i;

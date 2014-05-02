@@ -51,9 +51,7 @@ double fitsubset(matrix *x, matrix *y, int rowstart, int rowend)
 matrix* calckf(matrix *t, matrix *Xdb, double Xe)
 {
     matrix *kF, *data1, *data2;
-    int tcol = 1, /* Column to get time from (in sec) */
-        xdbcol = 4, /* Column for Xdb */
-        i; /* loop index */
+    int i; /* loop index */
     double kFi,
            X0 = val(Xdb, 0, 0),
            beta = BETA0;
@@ -94,9 +92,7 @@ matrix* calckf(matrix *t, matrix *Xdb, double Xe)
 matrix* calckfstep(matrix *t, matrix *Xdb, double Xe)
 {
     matrix *kF, *data1, *data2;
-    int tcol = 1, /* Column to get time from (in sec) */
-        xdbcol = 4, /* Column for Xdb */
-        i; /* loop index */
+    int i; /* loop index */
     double X0, /* Moisture content at the previous data point */
            kFi, /* Value of kF for that data point */
            dt; /* Difference in times between two points */
@@ -139,9 +135,7 @@ matrix* calckfstep(matrix *t, matrix *Xdb, double Xe)
 matrix* fitkf(matrix *t, matrix *Xdb)
 {
     matrix *kf;
-    int tcol = 1, /* Column to get time from (in sec) */
-        xdbcol = 4, /* Column for Xdb */
-        chunksize = 3, /* Number of data points to fit per coefficient */
+    int chunksize = 3, /* Number of data points to fit per coefficient */
         rowstart = 0, /* First row to use */
         nchunks, /* Number of kF values to fit */
         i, j; /* , loop indicies */

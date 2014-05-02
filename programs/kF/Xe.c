@@ -125,17 +125,12 @@ double XeModel(double t, matrix *beta)
  */
 double NCalcXe(int initial, matrix *t, matrix *Xdb, double Xe0)
 {
-    double f, df, /* Function values and derivatives */
-           b, /* Fitting parameters. Only the constant matters */
-           tol = 1e-10, /* Tolerance for Newton's method */
-           Xe = Xe0, /* Set Xe to the initial guess */
-           Xep; /* Previous guess */
+    double Xe = Xe0; /* Set Xe to the initial guess */
     matrix *beta, /* Matrix of fitting values */
            *beta0,
            *Xadj, 
            *tadj;
-    int i, /* Loop index */
-        iter = 0; /* Current iteration */
+    int i; /* Loop index */
 
     /* Set the initial moisture content */
     Xinit = val(Xdb, initial, 0);

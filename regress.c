@@ -53,7 +53,7 @@ matrix* regress(matrix *y, matrix *X)
  */
 matrix* polyfit(matrix* x, matrix* y, int order)
 {
-    matrix *Y, *X, *beta;
+    matrix *X, *beta;
     int i, j, nelem;
 
     X = NULL;
@@ -66,11 +66,9 @@ matrix* polyfit(matrix* x, matrix* y, int order)
             setval(X, pow(val(x, i, 0), j), i, j);
         }
     }
-    //Y = mtxtrn(y);
 
     beta = regress(y, X);
     DestroyMatrix(X);
-    //DestroyMatrix(Y);
 
     return beta;
 }

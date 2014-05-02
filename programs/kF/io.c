@@ -11,8 +11,7 @@
 matrix* LoadIGASorpTime(char *file)
 {
     int row0 = 17, /* First row that contains numbers */
-        col = 0, /* Get mass data from column 1 */
-        i; /* Loop index */
+        col = 0; /* Get mass data from column 1 */
     matrix *data, /* Raw data loaded from the file */
            *min, /* Time in minutes */
            *t; /* Time data in seconds */
@@ -76,8 +75,7 @@ matrix* LoadIGASorpXdb(char *file, double Mdry)
 matrix* LoadIGASorpRH(char *file)
 {
     int row0 = 17, /* First row that contains numbers */
-        col = 2, /* Get humidity data from column 3 */
-        i; /* Loop index */
+        col = 2; /* Get humidity data from column 3 */
     matrix *data, /* Raw data loaded from the file */
            *RH;
 
