@@ -33,6 +33,8 @@ double DeborahNumber(int, int, matrix*, matrix*, double, double, maxwell*);
 double NewLength(int, int, matrix*, matrix*, double, double);
 matrix* DeborahMatrix(int, matrix*, matrix*, double, double, maxwell*);
 matrix* LengthMatrix(int, matrix*, matrix*, double, double);
+matrix* LengthWaterLoss(int, matrix*, double, double, double);
+matrix* DOswinVector(int, matrix*, double);
 
 
 #endif

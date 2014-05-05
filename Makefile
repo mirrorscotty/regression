@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Imatrix -Imaterial-data/pasta -I. -ggdb -Wall
+CFLAGS=-Imatrix -Imaterial-data/choi-okos -Imaterial-data/pasta -I. -ggdb -Wall
 LDFLAGS=-lm
 VPATH=matrix material-data material-data/pasta programs programs/kF
 

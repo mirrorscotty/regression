@@ -2,6 +2,8 @@
 #include <math.h>
 #include "mechanical.h"
 #include "matrix.h"
+#include "choi-okos.h"
+#include "constants.h"
 
 /**
  * Determine the lowest number row in kF such that all rows after it contain
@@ -212,5 +214,61 @@ matrix* LengthMatrix(int initial,
         setval(L, NewLength(initial, i, Xdb, kF, L0, T), i, 0);
 
     return L;
+}
+
+/**
+ * Calculate the length change due to water loss, assuming maximum shrinkage.
+ * @param initial First row to look at
+ * @param Xdb Column matrix of moisture contents [kg/kg db]
+ * @param L0 Initial length [m]
+ * @param Mdry Mass of the bone-dry sample
+ * @param T Temperature at which the sample was dried.
+ * @returns Column matrix of sample thicknesses
+ */
+matrix* LengthWaterLoss(int initial,
+                        matrix *Xdb,
+                        double L0,
+                        double Mdry,
+                        double T)
+{
+    double length = 6e-3, /* Sample length [m] */
+           width = 8e-3, /* Sample width [m] */
+           rhow, /* Density of water [kg/m^3] */
+           Xdbi, /* Individual moisture content values */
+           X0 = val(Xdb, initial, 0); /* Initial moisture content */
+    int i; /* Loop index */
+    choi_okos *co; /* Choi-okos values for water density */
+    matrix *L; /* Calculated matrix of thicknesses */
+
+    /* Calculate the density of water at this temperature */
+    co = CreateChoiOkos(WATERCOMP);
+    rhow = rho(co, T);
+    DestroyChoiOkos(co);
+
+    L = CreateMatrix(nRows(Xdb), 1);
+
+    for(i=0; i<initial; i++)
+        setval(L, L0, i, 0);
+    for(i=initial; i<nRows(Xdb); i++) {
+        Xdbi = val(Xdb, i, 0);
+        Xdbi = Xdbi;
+
+        setval(L, L0-(X0-Xdbi)*Mdry/(rhow * length*width), i, 0);
+    }
+
+    return L;
+}
+
+/**
+ * Diffusivity calculations
+ */
+matrix* DOswinVector(int initial, matrix *X, double T)
+{
+    double i;
+    matrix *D;
+    D = CreateMatrix(nRows(X), 1);
+    for(i=0; i<nRows(X); i++)
+        setval(D, DiffCh10(val(X, i, 0), T), i, 0);
+    return D;
 }
 

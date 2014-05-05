@@ -14,9 +14,10 @@
 
 int main(int argc, char *argv[])
 {
-    matrix *t, *X, *RH, *kF, *data, *L, *De, *tmp;
+    matrix *t, *X, *RH, *kF, *data, *L, *De, *tmp, *Lwat, *Diff;
     int p0; /* Initial data point */
     double Xe,
+           Mdry,
            L0 = 6.22e-4,
            T = 60+273.15;
     char *outfile;
@@ -29,13 +30,15 @@ int main(int argc, char *argv[])
         puts("Usage:");
         puts("kF <datafile.csv> <Xdry>");
         puts("datafile.csv is the file to load data from.");
-        puts("Xdry is the moisture content of the dry sample.");
+        puts("Mdry is the moisture content of the dry sample.");
         puts("Output is saved to kF<datafile.csv>.");
         return 0;
     }
 
+    Mdry = atof(argv[2]);
+
     t = LoadIGASorpTime(argv[1]);
-    X = LoadIGASorpXdb(argv[1], atof(argv[2]));
+    X = LoadIGASorpXdb(argv[1], Mdry);
     RH = LoadIGASorpRH(argv[1]);
 
     p0 = FindInitialPointRH(RH);
@@ -54,15 +57,24 @@ int main(int argc, char *argv[])
 
     L = LengthMatrix(p0, X, kF, L0, T);
     De = DeborahMatrix(p0, X, kF, L0, T, m);
+    Lwat = LengthWaterLoss(p0, X, L0, Mdry*1e-6, T);
+    Diff = DOswinVector(p0, X, T);
 
     tmp = AugmentMatrix(data, L);
     DestroyMatrix(data);
     data = tmp;
     tmp = AugmentMatrix(data, De);
     DestroyMatrix(data);
+    data = tmp;
+    tmp = AugmentMatrix(data, Lwat);
+    DestroyMatrix(data);
+    data = tmp;
+    tmp = AugmentMatrix(data, Diff);
+    DestroyMatrix(data);
+    data = tmp;
 
-    mtxprntfile(tmp, outfile);
-    DestroyMatrix(tmp);
+    mtxprntfile(data, outfile);
+    DestroyMatrix(data);
 
     return 0;
 }
