@@ -185,6 +185,7 @@ double CalcXeIt(int initial, matrix *t, matrix *Xdb, double Xe0)
            Xep, /* Previous guess for Xe */
            dR, /* First derivative of R^2 with respect to Xe */
            d2R, /* Second derivative of R^2 */
+           kF,
            tol = 1e-7, /* How close Xe and Xep need to be before we stop */
            h = 1e-10, /* Used for numerical differentiation */
            m = 2; /* Used to increase the rate of convergence */
@@ -257,6 +258,8 @@ double CalcXeIt(int initial, matrix *t, matrix *Xdb, double Xe0)
         Xep = Xe;
         Xe = Xep + m*dR/d2R;
 
+        kF = val(tmp, 1, 0);
+
         /* Clean up */
         DestroyMatrix(y);
         DestroyMatrix(yph);
@@ -281,6 +284,7 @@ double CalcXeIt(int initial, matrix *t, matrix *Xdb, double Xe0)
 
     /* Print out how many iterations it took to find Xe */
     printf("Solution converged after %d iterations.\n", iter);
+    printf("kF = %g\n", kF);
 
     return Xe;
 }

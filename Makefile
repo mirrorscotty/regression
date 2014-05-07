@@ -24,6 +24,8 @@ Xe.o: kf.h
 
 De.o: kf.h
 
+flux.o: kf.h
+
 kFmain.o: kf.h
 
 gab.o:
@@ -37,7 +39,7 @@ regress.o: regress.h
 gab: fitnlm.o gab.o matrix.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-kF: calc.o crank.o io.o Xe.o kFmain.o fitnlm.o regress.o De.o matrix.a material-data.a
+kF: calc.o crank.o io.o Xe.o kFmain.o fitnlm.o regress.o De.o flux.o matrix.a material-data.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 fitdiff: fitdiff.o regress.o matrix.a material-data.a

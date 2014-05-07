@@ -4,6 +4,7 @@
 #include "matrix.h"
 #include "choi-okos.h"
 #include "constants.h"
+#include "kf.h"
 
 /**
  * Determine the lowest number row in kF such that all rows after it contain
@@ -231,8 +232,8 @@ matrix* LengthWaterLoss(int initial,
                         double Mdry,
                         double T)
 {
-    double length = 6e-3, /* Sample length [m] */
-           width = 8e-3, /* Sample width [m] */
+    double length = SLABLENGTH, /* Sample length [m] */
+           width = SLABWIDTH, /* Sample width [m] */
            rhow, /* Density of water [kg/m^3] */
            Xdbi, /* Individual moisture content values */
            X0 = val(Xdb, initial, 0); /* Initial moisture content */

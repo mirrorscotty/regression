@@ -1,6 +1,9 @@
 /**
  * @file main.c
- * Simple program to solve the Crank equation for kF.
+ * Program to analyze drying data (primarily from the IGASorp) and calculate
+ * diffusivity and shrinkage based on the Crank equation. Also calculates
+ * several other quantities such as Deborah number and mass/momentum flux at
+ * the surface of the sample.
  */
 
 #include "kf.h"
@@ -14,7 +17,8 @@
 
 int main(int argc, char *argv[])
 {
-    matrix *t, *X, *RH, *kF, *data, *L, *De, *tmp, *Lwat, *Diff;
+    matrix *t, *X, *RH, *kF, *data, *L, *De, *tmp, *Lwat, *Diff, *MFlux,
+           *MomeFlux;
     int p0; /* Initial data point */
     double Xe,
            Mdry,
@@ -59,6 +63,8 @@ int main(int argc, char *argv[])
     De = DeborahMatrix(p0, X, kF, L0, T, m);
     Lwat = LengthWaterLoss(p0, X, L0, Mdry*1e-6, T);
     Diff = DOswinVector(p0, X, T);
+    MFlux = MassFlux(p0, t, X, Mdry*1e-6);
+    MomeFlux = MomentumFlux(p0, t, X, L, T, m);
 
     tmp = AugmentMatrix(data, L);
     DestroyMatrix(data);
@@ -70,6 +76,12 @@ int main(int argc, char *argv[])
     DestroyMatrix(data);
     data = tmp;
     tmp = AugmentMatrix(data, Diff);
+    DestroyMatrix(data);
+    data = tmp;
+    tmp = AugmentMatrix(data, MFlux);
+    DestroyMatrix(data);
+    data = tmp;
+    tmp = AugmentMatrix(data, MomeFlux);
     DestroyMatrix(data);
     data = tmp;
 

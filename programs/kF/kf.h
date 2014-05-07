@@ -9,6 +9,9 @@
 #define CONSTnterms 50 
 #define BETA0 1e-4
 
+#define SLABWIDTH 6e-3
+#define SLABLENGTH 8e-3
+
 double CrankEquation(double, double, double, double, int);
 double CrankkF(double, double, double, double, double);
 double CrankModel(double, matrix*);
@@ -36,6 +39,8 @@ matrix* LengthMatrix(int, matrix*, matrix*, double, double);
 matrix* LengthWaterLoss(int, matrix*, double, double, double);
 matrix* DOswinVector(int, matrix*, double);
 
+matrix* MassFlux(int, matrix*, matrix*, double);
+matrix* MomentumFlux(int, matrix*, matrix*, matrix*, double, maxwell*);
 
 #endif
 
