@@ -64,7 +64,8 @@ int main(int argc, char *argv[])
     Lwat = LengthWaterLoss(p0, X, L0, Mdry*1e-6, T);
     Diff = DOswinVector(p0, X, T);
     MFlux = MassFlux(p0, t, X, Mdry*1e-6);
-    MomeFlux = MomentumFlux(p0, t, X, L, T, m);
+    //MomeFlux = MomentumFlux(p0, t, X, L, T, m);
+    MomeFlux = PastaMassFlux(p0, t, L, L0, T);
 
     tmp = AugmentMatrix(data, L);
     DestroyMatrix(data);

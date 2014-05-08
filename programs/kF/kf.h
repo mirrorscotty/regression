@@ -41,6 +41,7 @@ matrix* DOswinVector(int, matrix*, double);
 
 matrix* MassFlux(int, matrix*, matrix*, double);
 matrix* MomentumFlux(int, matrix*, matrix*, matrix*, double, maxwell*);
+matrix* PastaMassFlux(int, matrix*, matrix*, double, double);
 
 #endif
 
