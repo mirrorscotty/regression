@@ -12,11 +12,11 @@
  * @param kF Column matrix of kF values.
  * @returns Row number
  */
-int FindInitialPointkF(matrix *kF)
+int FindInitialPointkF(vector *kF)
 {
     int i;
-    for(i=nRows(kF); i>0; i--)
-        if(val(kF, i, 0) < 0)
+    for(i=len(kF); i>0; i--)
+        if(valV(kF, i) < 0)
             return i+1;
     return 0;
 }
@@ -27,22 +27,22 @@ int FindInitialPointkF(matrix *kF)
  * @param RH Column matrix of relative humidity values
  * @returns Row number
  */
-int FindInitialPointRH(matrix *RH)
+int FindInitialPointRH(vector *RH)
 {
     int i, /* Loop index */
-        nrows = nRows(RH); /* Number of data points */
+        nrows = len(RH); /* Number of data points */
     double avg = 0, /* Set the average to zero initially */
            tol = 0.05; /* How close to the average we need to be */
 
     /* Calculate the average relative humidity */
     for(i=0; i<nrows; i++)
-        avg += val(RH, i, 0);
+        avg += valV(RH, i);
     avg = avg/nrows;
 
     /* Find the lowest number row such that all rows after it fall within the
      * tolerance */
     for(i=nrows/2; i>0; i--)
-        if(fabs(val(RH, i, 0) - avg) > tol)
+        if(fabs(valV(RH, i) - avg) > tol)
             return i+1;
 
     return 0;
@@ -62,8 +62,8 @@ int FindInitialPointRH(matrix *RH)
  */
 double DeborahNumber(int initial,
                      int point,
-                     matrix *Xdb,
-                     matrix *kF,
+                     vector *Xdb,
+                     vector *kF,
                      double L0,
                      double T,
                      maxwell* m)
@@ -81,12 +81,12 @@ double DeborahNumber(int initial,
            tr; /* Mean relaxation time */
 
     /* Grab the initial moisture content and kF values */
-    Xdb0 = val(Xdb, initial, 0);
-    kf0 = val(kF, initial, 0);
+    Xdb0 = valV(Xdb, initial);
+    kf0 = valV(kF, initial);
 
     /* Get the ones at the time we're interested in. */
-    Xdbi = val(Xdb, point, 0);
-    kFi = val(kF, point, 0);
+    Xdbi = valV(Xdb, point);
+    kFi = valV(kF, point);
 
     /* Calculate diffusivities */
     Dkf0 = kf0*L0*L0/(M_PI*M_PI);
@@ -122,8 +122,8 @@ double DeborahNumber(int initial,
  */
 double NewLength(int initial,
                  int point,
-                 matrix *Xdb,
-                 matrix *kF,
+                 vector *Xdb,
+                 vector *kF,
                  double L0,
                  double T)
 {
@@ -138,12 +138,12 @@ double NewLength(int initial,
            kFi; /* Current kF value */
 
     /* Grab the initial moisture content and kF values */
-    Xdb0 = val(Xdb, initial, 0);
-    kf0 = val(kF, initial, 0);
+    Xdb0 = valV(Xdb, initial);
+    kf0 = valV(kF, initial);
 
     /* Get the ones at the time we're interested in. */
-    Xdbi = val(Xdb, point, 0);
-    kFi = val(kF, point, 0);
+    Xdbi = valV(Xdb, point);
+    kFi = valV(kF, point);
 
     /* Calculate diffusivities */
     Dkf0 = kf0*L0*L0/(M_PI*M_PI);
@@ -169,22 +169,22 @@ double NewLength(int initial,
  * @param m Set of Maxwell material parameters.
  * @returns Column matrix of Deborah numbers.
  */
-matrix* DeborahMatrix(int initial,
-                      matrix *Xdb,
-                      matrix *kF,
+vector* DeborahMatrix(int initial,
+                      vector *Xdb,
+                      vector *kF,
                       double L0,
                       double T,
                       maxwell* m)
 {
     int i;
 
-    matrix* De;
+    vector* De;
 
-    De = CreateMatrix(nRows(kF), 1);
+    De = CreateVector(len(kF));
     for(i=0; i<initial; i++)
-        setval(De, 0, i, 0);
-    for(i=initial; i<nRows(De); i++)
-        setval(De, DeborahNumber(initial, i, Xdb, kF, L0, T, m), i, 0);
+        setvalV(De, i, 0);
+    for(i=initial; i<len(De); i++)
+        setvalV(De, i, DeborahNumber(initial, i, Xdb, kF, L0, T, m));
 
     return De;
 }
@@ -198,21 +198,21 @@ matrix* DeborahMatrix(int initial,
  * @param T Drying temperature [K]
  * @returns Column matrix of lengths
  */
-matrix* LengthMatrix(int initial,
-                     matrix *Xdb,
-                     matrix *kF,
+vector* LengthMatrix(int initial,
+                     vector *Xdb,
+                     vector *kF,
                      double L0,
                      double T)
 {
     int i;
 
-    matrix *L;
+    vector *L;
 
-    L = CreateMatrix(nRows(kF), 1);
+    L = CreateVector(len(kF));
     for(i=0; i<initial; i++)
-        setval(L, L0, i, 0);
-    for(i=initial; i<nRows(L); i++)
-        setval(L, NewLength(initial, i, Xdb, kF, L0, T), i, 0);
+        setvalV(L, i, L0);
+    for(i=initial; i<len(L); i++)
+        setvalV(L, i, NewLength(initial, i, Xdb, kF, L0, T));
 
     return L;
 }
@@ -226,8 +226,8 @@ matrix* LengthMatrix(int initial,
  * @param T Temperature at which the sample was dried.
  * @returns Column matrix of sample thicknesses
  */
-matrix* LengthWaterLoss(int initial,
-                        matrix *Xdb,
+vector* LengthWaterLoss(int initial,
+                        vector *Xdb,
                         double L0,
                         double Mdry,
                         double T)
@@ -236,25 +236,24 @@ matrix* LengthWaterLoss(int initial,
            width = SLABWIDTH, /* Sample width [m] */
            rhow, /* Density of water [kg/m^3] */
            Xdbi, /* Individual moisture content values */
-           X0 = val(Xdb, initial, 0); /* Initial moisture content */
+           X0 = valV(Xdb, initial); /* Initial moisture content */
     int i; /* Loop index */
     choi_okos *co; /* Choi-okos values for water density */
-    matrix *L; /* Calculated matrix of thicknesses */
+    vector *L; /* Calculated matrix of thicknesses */
 
     /* Calculate the density of water at this temperature */
     co = CreateChoiOkos(WATERCOMP);
     rhow = rho(co, T);
     DestroyChoiOkos(co);
 
-    L = CreateMatrix(nRows(Xdb), 1);
+    L = CreateVector(len(Xdb));
 
     for(i=0; i<initial; i++)
-        setval(L, L0, i, 0);
-    for(i=initial; i<nRows(Xdb); i++) {
-        Xdbi = val(Xdb, i, 0);
-        Xdbi = Xdbi;
+        setvalV(L, i, L0);
+    for(i=initial; i<len(Xdb); i++) {
+        Xdbi = valV(Xdb, i);
 
-        setval(L, L0-(X0-Xdbi)*Mdry/(rhow * length*width), i, 0);
+        setvalV(L, i, L0-(X0-Xdbi)*Mdry/(rhow * length*width));
     }
 
     return L;
@@ -263,13 +262,13 @@ matrix* LengthWaterLoss(int initial,
 /**
  * Diffusivity calculations
  */
-matrix* DOswinVector(int initial, matrix *X, double T)
+vector* DOswinVector(int initial, vector *X, double T)
 {
-    double i;
-    matrix *D;
-    D = CreateMatrix(nRows(X), 1);
-    for(i=0; i<nRows(X); i++)
-        setval(D, DiffCh10(val(X, i, 0), T), i, 0);
+    int i;
+    vector *D;
+    D = CreateVector(len(X));
+    for(i=0; i<len(X); i++)
+        setvalV(D, i, DiffCh10(valV(X, i), T));
     return D;
 }
 

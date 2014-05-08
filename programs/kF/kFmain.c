@@ -17,8 +17,8 @@
 
 int main(int argc, char *argv[])
 {
-    matrix *t, *X, *RH, *kF, *data, *L, *De, *tmp, *Lwat, *Diff, *MFlux,
-           *MomeFlux;
+    vector *t, *X, *RH, *kF, *L, *De, *Lwat, *Diff, *MFlux, *MomeFlux;
+    matrix *data;
     int p0; /* Initial data point */
     double Xe,
            Mdry,
@@ -54,11 +54,9 @@ int main(int argc, char *argv[])
         Xe = CalcXeIt(p0, t, X, .0402);
     printf("Xe = %g\n", Xe);
 
-    t = LoadIGASorpTime(argv[1]);
     sprintf(outfile, "kF%s", argv[1]);
-    data = calckf(t, X, Xe);
-    kF = ExtractColumn(data, 2);
 
+    kF = calckf(t, X, Xe);
     L = LengthMatrix(p0, X, kF, L0, T);
     De = DeborahMatrix(p0, X, kF, L0, T, m);
     Lwat = LengthWaterLoss(p0, X, L0, Mdry*1e-6, T);
@@ -67,24 +65,7 @@ int main(int argc, char *argv[])
     //MomeFlux = MomentumFlux(p0, t, X, L, T, m);
     MomeFlux = PastaMassFlux(p0, t, L, L0, T);
 
-    tmp = AugmentMatrix(data, L);
-    DestroyMatrix(data);
-    data = tmp;
-    tmp = AugmentMatrix(data, De);
-    DestroyMatrix(data);
-    data = tmp;
-    tmp = AugmentMatrix(data, Lwat);
-    DestroyMatrix(data);
-    data = tmp;
-    tmp = AugmentMatrix(data, Diff);
-    DestroyMatrix(data);
-    data = tmp;
-    tmp = AugmentMatrix(data, MFlux);
-    DestroyMatrix(data);
-    data = tmp;
-    tmp = AugmentMatrix(data, MomeFlux);
-    DestroyMatrix(data);
-    data = tmp;
+    data = CatColVector(9, t, X, kF, L, De, Lwat, Diff, MFlux, MomeFlux);
 
     mtxprntfile(data, outfile);
     DestroyMatrix(data);

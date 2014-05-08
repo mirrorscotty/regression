@@ -42,40 +42,35 @@ double fitsubset(matrix *x, matrix *y, int rowstart, int rowend)
 
 /**
  * Calculates kF using Newton's method
+ *
+ * TODO: Allow an initial point to be supplied.
+ *
  * @param t Column matrix of times [s]
  * @param Xdb column matrix of moisture contents [kg/kg db]
  * @param Xe Equilibrium moisture content [kg/kg db]
  * @returns Matrix of values. Col 1: Time [s], Col 2: Moisture Content 
  *      [kg/kg db], Col 3: kF [1/s]
  */
-matrix* calckf(matrix *t, matrix *Xdb, double Xe)
+vector* calckf(vector *t, vector *Xdb, double Xe)
 {
-    matrix *kF, *data1, *data2;
+    vector *kF;
     int i; /* loop index */
     double kFi,
-           X0 = val(Xdb, 0, 0),
+           X0 = valV(Xdb, 0),
            beta = BETA0;
 
     /* Make a matrix to store the resulting values in */
-    kF = CreateMatrix(nRows(t), 1);
+    kF = CreateVector(len(t));
 
     /* Calculate kF at each point directly using Newton's method */
-    for(i=0; i<nRows(kF); i++) {
+    for(i=0; i<len(kF); i++) {
         beta = BETA0;
-        kFi = CrankkF(val(t, i, 0), val(Xdb, i, 0), X0, Xe, beta);
-        setval(kF, kFi, i, 0);
+        kFi = CrankkF(valV(t, i), valV(Xdb, i), X0, Xe, beta);
+        setvalV(kF, i, kFi);
         //beta = val(kF, i, 0);
     }
 
-    /* Print the results to a file */
-    data1 = AugmentMatrix(t, Xdb);
-    data2 = AugmentMatrix(data1, kF);
-
-    /* Clean up */
-    DestroyMatrix(kF);
-    DestroyMatrix(data1);
-    
-    return data2;
+    return kF;
 }
 
 /**

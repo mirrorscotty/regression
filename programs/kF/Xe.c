@@ -19,12 +19,14 @@ double Xinit = 0;
  * \f$y = \ln(X-X_e)\f$ and \f$b = \ln(X_0-X_e)\f$, and then solves the equation
  * \f$F(X_e) = b - \ln(X_0-X_e) = 0\f$ using Newton's method.
  *
+ * This function is made obsolete by CalcXeIt
+ *
  * @param t Column matrix containing time during drying [s]
  * @param Xdb Column matrix of moisture content [kg/kg db]
  * @param Xe0 Initial guess for equilibrium moisture content.
  * @returns Equilibrium moisture content [kg/kg db]
  *
- * @see polyfit
+ * @see polyfit CalcXeIt
  */
 double CalcXe(int initial, matrix *t, matrix *Xdb, double Xe0)
 {
@@ -98,12 +100,13 @@ double CalcXe(int initial, matrix *t, matrix *Xdb, double Xe0)
 /**
  * Model for fitting \f[\ln\frac{X-Xe}{X0-Xe} = at \f] in order to find Xe. This
  * is used by the fitnlm function to calculate the fitting parameters.
+ * This function is made obsolete by CalcXeIt
  * @param t Time [s]
  * @param beta Set of fitting parameters. Row 0, col 0 is Xe and row 1, col 0 is
  *      the kf parameter.
  * @returns Moisture content [kg/kg db]
  *
- * @see fitnlm
+ * @see fitnlm CalcXeIt
  */
 double XeModel(double t, matrix *beta)
 {
@@ -115,13 +118,14 @@ double XeModel(double t, matrix *beta)
 
 /**
  * Calculate equilibrium moisture content (Xe) using nonlinear regression.
+ * This function is made obsolete by CalcXeIt
  * @param initial Row number of the first data point to use in the calculation
  * @param t Column matrix of time values [s]
  * @param Xdb Column matrix of moisture contents [kg/kg db]
  * @param Xe0 Initial guess for Xe. The initial value for kf is hard coded below
  * @returns Equilibrium moisture content [kg/kg db]
  *
- * @see fitnlm XeModel
+ * @see fitnlm XeModel CalcXeIt
  */
 double NCalcXe(int initial, matrix *t, matrix *Xdb, double Xe0)
 {
@@ -169,14 +173,14 @@ double NCalcXe(int initial, matrix *t, matrix *Xdb, double Xe0)
  * value for that set of coefficients and then iteratively improves the fit
  * using Newton's method.
  * @param initial Row number of the first data point to use
- * @param t Column matrix of time values [s]
- * @param Xdb Column matrix of moisture contents [kg/kg db]
+ * @param t Vector of time values [s]
+ * @param Xdb Vector of moisture contents [kg/kg db]
  * @param Xe0 Initial guess for equilibrium moisture content [kg/kg db]
  * @returns Equilibrium moisture content [kg/kg db]
  *
  * @see regress
  */
-double CalcXeIt(int initial, matrix *t, matrix *Xdb, double Xe0)
+double CalcXeIt(int initial, vector *t, vector *Xdb, double Xe0)
 {
     int iter = 0, /* Keep track of the number of iterations */
         i; /* Loop index */
@@ -192,7 +196,8 @@ double CalcXeIt(int initial, matrix *t, matrix *Xdb, double Xe0)
     matrix *beta, /* Beta value from regress */
            *beta_ph, /* Same, but calculated at Xe + h */
            *beta_mh, /* Beta at Xe - h */
-           *tmp_ph, /* Same as beta_ph, but with an extra zero to make rsquared happy */
+           *tmp_ph, /* Same as beta_ph, but with an extra zero to make rsquared
+                       happy */
            *tmp,
            *tmp_mh,
            *y, /* y values */
@@ -202,19 +207,19 @@ double CalcXeIt(int initial, matrix *t, matrix *Xdb, double Xe0)
            *Xadj; /* Same as tadj, but for Xdb */
 
     /* Set the initial moisture content */
-    Xinit = val(Xdb, initial, 0);
+    Xinit = valV(Xdb, initial);
     /* Set the first value of Xe to Xe0 */
     Xe = Xe0;
 
     /* Make smaller matricies that contain only the "good" data. */
-    tadj = CreateMatrix(nRows(Xdb) - initial, 1);
-    Xadj = CreateMatrix(nRows(Xdb) - initial, 1);
-    for(i=initial; i<nRows(t); i++) {
+    tadj = CreateMatrix(len(t) - initial, 1);
+    Xadj = CreateMatrix(len(Xdb) - initial, 1);
+    for(i=initial; i<len(t); i++) {
         /* In addition to just copying the data, subtract the initial time from
          * each value to make sure that the intercept for the model goes through
          * the origin */
-        setval(tadj, val(t, i, 0)-val(t, initial, 0), i-initial, 0);
-        setval(Xadj, val(Xdb, i, 0), i-initial, 0);
+        setval(tadj, valV(t, i)-valV(t, initial), i-initial, 0);
+        setval(Xadj, valV(Xdb, i), i-initial, 0);
     }
 
     /* Actually find Xe */

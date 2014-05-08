@@ -16,32 +16,32 @@ double CrankEquation(double, double, double, double, int);
 double CrankkF(double, double, double, double, double);
 double CrankModel(double, matrix*);
 
-matrix* LoadIGASorpTime(char*);
-matrix* LoadIGASorpXdb(char*, double);
-matrix* LoadIGASorpRH(char*);
+vector* LoadIGASorpTime(char*);
+vector* LoadIGASorpXdb(char*, double);
+vector* LoadIGASorpRH(char*);
 
 double CalcXe(int, matrix*, matrix*, double);
 double NCalcXe(int, matrix*, matrix*, double);
-double CalcXeIt(int, matrix*, matrix*, double);
+double CalcXeIt(int, vector*, vector*, double);
 
 double fitsubset(matrix*, matrix*, int, int);
-matrix* calckf(matrix*, matrix*, double);
+vector* calckf(vector*, vector*, double);
 matrix* calckfstep(matrix*, matrix*, double);
 matrix* fitkf(matrix*, matrix*);
 
-int FindInitialPointkF(matrix*);
-int FindInitialPointRH(matrix*);
+int FindInitialPointkF(vector*);
+int FindInitialPointRH(vector*);
 
-double DeborahNumber(int, int, matrix*, matrix*, double, double, maxwell*);
-double NewLength(int, int, matrix*, matrix*, double, double);
-matrix* DeborahMatrix(int, matrix*, matrix*, double, double, maxwell*);
-matrix* LengthMatrix(int, matrix*, matrix*, double, double);
-matrix* LengthWaterLoss(int, matrix*, double, double, double);
-matrix* DOswinVector(int, matrix*, double);
+double DeborahNumber(int, int, vector*, vector*, double, double, maxwell*);
+double NewLength(int, int, vector*, vector*, double, double);
+vector* DeborahMatrix(int, vector*, vector*, double, double, maxwell*);
+vector* LengthMatrix(int, vector*, vector*, double, double);
+vector* LengthWaterLoss(int, vector*, double, double, double);
+vector* DOswinVector(int, vector*, double);
 
-matrix* MassFlux(int, matrix*, matrix*, double);
-matrix* MomentumFlux(int, matrix*, matrix*, matrix*, double, maxwell*);
-matrix* PastaMassFlux(int, matrix*, matrix*, double, double);
+vector* MassFlux(int, vector*, vector*, double);
+vector* MomentumFlux(int, vector*, vector*, vector*, double, maxwell*);
+vector* PastaMassFlux(int, vector*, vector*, double, double);
 
 #endif
 

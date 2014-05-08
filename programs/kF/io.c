@@ -6,26 +6,26 @@
  * to a CSV file before loading. The header at the top of the file is ignored,
  * but the values must be separated by commas.
  * @param file The name of the file to open.
- * @returns A column matrix of times [s]
+ * @returns A vector of times [s]
  */
-matrix* LoadIGASorpTime(char *file)
+vector* LoadIGASorpTime(char *file)
 {
     int row0 = 17, /* First row that contains numbers */
         col = 0; /* Get mass data from column 1 */
-    matrix *data, /* Raw data loaded from the file */
-           *min, /* Time in minutes */
+    matrix *data; /* Raw data loaded from the file */
+    vector *min, /* Time in minutes */
            *t; /* Time data in seconds */
 
     /* Load the data file and extract the column containing time */
     data = mtxloadcsv(file, row0);
-    min = ExtractColumn(data, col);
+    min = ExtractColumnAsVector(data, col);
 
     /* Convert from minutes to seconds */
-    t = mtxmulconst(min, 60);
+    t = scalarmultV(60, min);
 
     /* Clean up */
     DestroyMatrix(data);
-    DestroyMatrix(min);
+    DestroyVector(min);
     
     return t;
 }
@@ -37,29 +37,29 @@ matrix* LoadIGASorpTime(char *file)
  * the values must be separated by commas.
  * @param file The name of the file to open.
  * @param Mdry The bone dry mass of the sample [mg]
- * @returns A column matrix of moisture content values [kg/kg db]
+ * @returns A vector of moisture content values [kg/kg db]
  */
-matrix* LoadIGASorpXdb(char *file, double Mdry)
+vector* LoadIGASorpXdb(char *file, double Mdry)
 {
     int row0 = 17, /* First row that contains numbers */
         col = 1, /* Get mass data from column 2 */
         i; /* Loop index */
-    matrix *data, /* Raw data from CSV file */
-           *M, /* Mass of sample [mg] */
+    matrix *data; /* Raw data from CSV file */
+    vector *M, /* Mass of sample [mg] */
            *Xdb; /* Calculate moisture content [kg/kg db] */
 
     /* Load the data and pull out the relevant column */
     data = mtxloadcsv(file, row0);
-    M = ExtractColumn(data, col);
+    M = ExtractColumnAsVector(data, col);
     /* Make a matrix to hold the moisture content values */
-    Xdb = CreateMatrix(nRows(M), 1);
+    Xdb = CreateVector(len(M));
 
     /* Calculate moisture content based on mass and bone dry mass */
-    for(i=0; i<nRows(M); i++)
-        setval(Xdb, (val(M, i, 0)-Mdry)/Mdry, i, 0);
+    for(i=0; i<len(M); i++)
+        setvalV(Xdb, i, (valV(M, i)-Mdry)/Mdry);
 
     /* Clean up */
-    DestroyMatrix(M);
+    DestroyVector(M);
     DestroyMatrix(data);
     
     return Xdb;
@@ -72,21 +72,20 @@ matrix* LoadIGASorpXdb(char *file, double Mdry)
  * @param file The name of the file to open.
  * @returns A column matrix of times [s]
  */
-matrix* LoadIGASorpRH(char *file)
+vector* LoadIGASorpRH(char *file)
 {
     int row0 = 17, /* First row that contains numbers */
         col = 2; /* Get humidity data from column 3 */
-    matrix *data, /* Raw data loaded from the file */
-           *RH;
+    matrix *data; /* Raw data loaded from the file */
+    vector *RH;
 
-    /* Load the data file and extract the column containing time */
+    /* Load the data file and extract the column containing humidity */
     data = mtxloadcsv(file, row0);
-    RH = ExtractColumn(data, col);
-
-    /* Convert from minutes to seconds */
+    RH = ExtractColumnAsVector(data, col);
 
     /* Clean up */
     DestroyMatrix(data);
     
     return RH;
 }
+
