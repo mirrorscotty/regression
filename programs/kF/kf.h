@@ -36,6 +36,7 @@ double DeborahNumber(int, int, vector*, vector*, double, double, maxwell*);
 double NewLength(int, int, vector*, vector*, double, double);
 vector* DeborahMatrix(int, vector*, vector*, double, double, maxwell*);
 vector* LengthMatrix(int, vector*, vector*, double, double);
+vector* LengthConstD(int, vector*, double, double);
 vector* LengthWaterLoss(int, vector*, double, double, double);
 vector* DOswinVector(int, vector*, double);
 

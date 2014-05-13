@@ -17,7 +17,7 @@
 
 int main(int argc, char *argv[])
 {
-    vector *t, *X, *RH, *kF, *L, *De, *Lwat, *Diff, *MFlux, *MomeFlux;
+    vector *t, *X, *RH, *kF, *L, *De, *Lwat, *Diff, *MFlux, *MomeFlux, *Lconst;
     matrix *data;
     int p0; /* Initial data point */
     double Xe,
@@ -60,12 +60,13 @@ int main(int argc, char *argv[])
     L = LengthMatrix(p0, X, kF, L0, T);
     De = DeborahMatrix(p0, X, kF, L0, T, m);
     Lwat = LengthWaterLoss(p0, X, L0, Mdry*1e-6, T);
+    Lconst = LengthConstD(p0, kF, L0, T);
     Diff = DOswinVector(p0, X, T);
     MFlux = MassFlux(p0, t, X, Mdry*1e-6);
     //MomeFlux = MomentumFlux(p0, t, X, L, T, m);
     MomeFlux = PastaMassFlux(p0, t, L, L0, T);
 
-    data = CatColVector(9, t, X, kF, L, De, Lwat, Diff, MFlux, MomeFlux);
+    data = CatColVector(9, t, X, kF, L, De, Lwat, Lconst, Diff, MFlux, MomeFlux);
 
     mtxprntfile(data, outfile);
     DestroyMatrix(data);
