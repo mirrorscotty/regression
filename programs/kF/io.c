@@ -70,7 +70,7 @@ vector* LoadIGASorpXdb(char *file, double Mdry)
  * to a CSV file before loading. The header at the top of the file is ignored,
  * but the values must be separated by commas.
  * @param file The name of the file to open.
- * @returns A column matrix of times [s]
+ * @returns A vector of times [s]
  */
 vector* LoadIGASorpRH(char *file)
 {

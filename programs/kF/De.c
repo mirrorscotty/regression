@@ -9,7 +9,7 @@
 /**
  * Determine the lowest number row in kF such that all rows after it contain
  * positive values.
- * @param kF Column matrix of kF values.
+ * @param kF Vector of kF values.
  * @returns Row number
  */
 int FindInitialPointkF(vector *kF)
@@ -24,7 +24,7 @@ int FindInitialPointkF(vector *kF)
 /**
  * Determine the lowest number row in RH such that all rows after it fall within
  * the tolerance.
- * @param RH Column matrix of relative humidity values
+ * @param RH Vector of relative humidity values
  * @returns Row number
  */
 int FindInitialPointRH(vector *RH)
@@ -53,8 +53,8 @@ int FindInitialPointRH(vector *RH)
  * diffusion time scale is taken to be half the thickness of the slab.
  * @param initial Row number for the first data point to use.
  * @param point Row number for the current data point.
- * @param Xdb Column matrix of moisture contents [kg/kg db]
- * @param kF Column matrix of kF values [1/s]
+ * @param Xdb Vector of moisture contents [kg/kg db]
+ * @param kF Vector of kF values [1/s]
  * @param L0 Initial slab thickness (full thickness) [m]
  * @param T Temperature (assumed constant) [K]
  * @param m Set of Maxwell parameters used for determining mean relaxation time.
@@ -116,7 +116,7 @@ double DeborahNumber(int initial,
  * @param L0 Initial length [m]
  * @param T Drying temperature [K]
  * @param m Set of Maxwell material parameters.
- * @returns Column matrix of Deborah numbers.
+ * @returns Vector of Deborah numbers.
  */
 vector* DeborahMatrix(int initial,
                       vector *Xdb,

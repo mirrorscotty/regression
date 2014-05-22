@@ -45,10 +45,10 @@ double fitsubset(matrix *x, matrix *y, int rowstart, int rowend)
  *
  * TODO: Allow an initial point to be supplied.
  *
- * @param t Column matrix of times [s]
- * @param Xdb column matrix of moisture contents [kg/kg db]
+ * @param t Vector of times [s]
+ * @param Xdb Vector of moisture contents [kg/kg db]
  * @param Xe Equilibrium moisture content [kg/kg db]
- * @returns Matrix of values. Col 1: Time [s], Col 2: Moisture Content 
+ * @returns Vector of values. Col 1: Time [s], Col 2: Moisture Content 
  *      [kg/kg db], Col 3: kF [1/s]
  */
 vector* calckf(vector *t, vector *Xdb, double Xe)
@@ -121,8 +121,8 @@ matrix* calckfstep(matrix *t, matrix *Xdb, double Xe)
  * Calculates kF using nonlinear regression. For this function, Xe must be set
  * in the macro at the top of the file. I'm far too lazy to rewrite my fitting
  * function to accept an additional parameter.
- * @param t Column matrix of time values [s]
- * @param Xdb Column matrix of moisture contents [kg/kg db]
+ * @param t Vector of time values [s]
+ * @param Xdb Vector of moisture contents [kg/kg db]
  * @param file Filename to save the data to
  * @returns Matrix of values. Col 1: Time [s], Col 2: Moisture Content 
  *      [kg/kg db], Col 3: kF [1/s]
@@ -157,5 +157,4 @@ matrix* fitkf(matrix *t, matrix *Xdb)
 
     return kf;
 }
-
 

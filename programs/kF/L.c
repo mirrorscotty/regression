@@ -16,8 +16,8 @@
  * calculated diffusivity. This function returns the full thickness of the slab.
  * @param initial Row number for the first data point to use.
  * @param point Row number for the current data point.
- * @param Xdb Column matrix of moisture contents [kg/kg db]
- * @param kF Column matrix of kF values [1/s]
+ * @param Xdb Vector of moisture contents [kg/kg db]
+ * @param kF Vector of kF values [1/s]
  * @param L0 Initial length [m]
  * @param T Temperature (assumed constant) [K]
  * @returns Thickness [-]
@@ -69,7 +69,7 @@ double NewLength(int initial,
  * @param kF Row matrix of kF values [1/s]
  * @param L0 Initial length [m]
  * @param T Drying temperature [K]
- * @returns Column matrix of lengths
+ * @returns Vector of lengths
  */
 vector* LengthMatrix(int initial,
                      vector *Xdb,
@@ -91,11 +91,11 @@ vector* LengthMatrix(int initial,
 }
 
 /**
- * @param Xdb Row matrix of moisture contents [kg/kg db]
- * @param kF Row matrix of kF values [1/s]
+ * @param Xdb Vector of moisture contents [kg/kg db]
+ * @param kF Vector of kF values [1/s]
  * @param L0 Initial length [m]
  * @param T Drying temperature [K]
- * @returns Column matrix of lengths
+ * @returns Vector matrix of lengths
  */
 vector* LengthConstD(int initial,
                      vector *kF,
@@ -132,11 +132,11 @@ vector* LengthConstD(int initial,
 /**
  * Calculate the length change due to water loss, assuming maximum shrinkage.
  * @param initial First row to look at
- * @param Xdb Column matrix of moisture contents [kg/kg db]
+ * @param Xdb Vector of moisture contents [kg/kg db]
  * @param L0 Initial length [m]
  * @param Mdry Mass of the bone-dry sample
  * @param T Temperature at which the sample was dried.
- * @returns Column matrix of sample thicknesses
+ * @returns Vector of sample thicknesses
  */
 vector* LengthWaterLoss(int initial,
                         vector *Xdb,
