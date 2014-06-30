@@ -39,6 +39,39 @@ double CrankEquation(double kf, double t, double X0, double Xe, int nterms)
 }
 
 /**
+ * Equation for sorption/desorption by a membrane
+ * @param x X-coordinate in the membrane [m]
+ * @param t Time [s]
+ * @param L Membrane thickness [m]
+ * @param D Diffusivity constant [m^2/s]
+ * @param X1 Moisture content of the surfaces of the slab [kg/kg db]
+ * @param X0 Initial moisture content of the interior of the slab [kg/kg db]
+ * @param nterms Number of terms to use when evaluating the solution
+ *
+ * @returns Moisture content at the specified point in the slab [kg/kg db]
+ */
+double CrankEquationFx(double x, double t,
+                       double L, double D,
+                       double X1, double X0,
+                       int nterms)
+{
+    double value = 0; /* Variable for summing up all the terms */
+    int n; /* Current term */
+    double kF = D*M_PI*M_PI/(L*L),
+           term;
+
+    /* Calculate the value for each of the n terms and add them up */
+    for(n=0; n<nterms; n++) {
+        term = pow(-1, n)/(2*n+1) * exp(-kF*pow(2*n+1, 2)*t/4)
+            * cos( ((2*n+1)*M_PI*x)/(2*L) );
+        //printf("t[%d] = %g\n", n, term);
+        value += term;
+    }
+
+    return (1 - 4/M_PI*value) * (X1-X0) + X0;
+}
+
+/**
  * Solve the Crank equation for kF using Newton's method. The kF value has the
  * following form:
  * \f[

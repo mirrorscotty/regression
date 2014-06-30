@@ -16,4 +16,7 @@ Additionally, it has several programs to fit pasta drying parameters from data.
     diffusivity and shrinkage based on the Crank equation. Also calculates
     several other quantities such as Deborah number and mass/momentum flux at
     the surface of the sample.
+* modulus: Calculate the storage and loss moduli of a viscoelastic material
+    given a set of Maxwell material properties as well as an imposed strain
+    magnitude and frequency.
 

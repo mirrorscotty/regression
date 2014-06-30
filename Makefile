@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Imatrix -Imaterial-data/choi-okos -Imaterial-data/pasta -I. -ggdb -Wall
 LDFLAGS=-lm
-VPATH=matrix material-data material-data/pasta programs programs/kF
+VPATH=matrix material-data material-data/pasta programs programs/kF programs/modulus
 
 all: kF gab fitdiff
 
@@ -37,6 +37,12 @@ fitdiff.o: diffusivity.h isotherms.h constants.h
 fitdiff: fitdiff.o regress.o matrix.a material-data.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
+# modulus program
+modulus.o: stress-strain.h pasta.h matrix.h
+stress-strain.o: stress-strain.h pasta.h matrix.h
+modulus: fitnlm.o modulus.o stress-strain.o matrix.a material-data.a 
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
 # regression files in the main directory
 fitnlm.o: regress.h
 regress.o: regress.h
@@ -45,6 +51,6 @@ doc: Doxyfile
 	doxygen Doxyfile
 
 clean:
-	rm -rf *.o *.a doc kF gab fitdiff
+	rm -rf *.o *.a doc kF gab fitdiff modulus
 	$(MAKE) -C material-data clean
 	$(MAKE) -C matrix clean
