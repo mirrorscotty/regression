@@ -1,3 +1,8 @@
+/**
+ * @file De.c
+ * Calculate Deborah number.
+ */
+
 #include "diffusivity.h"
 #include <math.h>
 #include "mechanical.h"

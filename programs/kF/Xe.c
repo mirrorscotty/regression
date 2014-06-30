@@ -1,3 +1,8 @@
+/**
+ * @file Xe.c
+ * Calculate equilibrium moisture content using nonlinear regression.
+ */
+
 #include "kf.h"
 #include "matrix.h"
 #include "regress.h"

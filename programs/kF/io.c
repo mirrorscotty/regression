@@ -1,3 +1,8 @@
+/**
+ * io.c
+ * Input/output functions for the kF program.
+ */
+
 #include "kf.h"
 #include "matrix.h"
 

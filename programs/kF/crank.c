@@ -1,3 +1,9 @@
+/**
+ * @file crank.c
+ * Determine the moisture profile for a drying slab based on the equations from
+ * Crank 1956.
+ */
+
 #include "kf.h"
 #include "matrix.h"
 #include <math.h>

@@ -1,5 +1,5 @@
 /**
- * @file main.c
+ * @file kFmain.c
  * Program to analyze drying data (primarily from the IGASorp) and calculate
  * diffusivity and shrinkage based on the Crank equation. Also calculates
  * several other quantities such as Deborah number and mass/momentum flux at

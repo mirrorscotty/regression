@@ -1,3 +1,8 @@
+/**
+ * @file calc.c
+ * Functions to calculate kF
+ */
+
 #include "kf.h"
 #include "matrix.h"
 #include "regress.h"

@@ -3,7 +3,7 @@ CFLAGS=-Imatrix -Imaterial-data/choi-okos -Imaterial-data/pasta -I. -ggdb -Wall
 LDFLAGS=-lm
 VPATH=matrix material-data material-data/pasta programs programs/kF programs/modulus
 
-all: kF gab fitdiff
+all: kF gab fitdiff modulus
 
 # Make stuff from other projects using their makefile
 matrix.a:
