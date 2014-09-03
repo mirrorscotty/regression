@@ -1,3 +1,8 @@
+/**
+ * @file L.c
+ * Functions for calculating shrinkage.
+ */
+
 #include "kf.h"
 #include "diffusivity.h"
 #include <math.h>
@@ -5,11 +10,6 @@
 #include "matrix.h"
 #include "choi-okos.h"
 #include "constants.h"
-
-/**
- * @file L.c
- * Functions for calculating shrinkage.
- */
 
 /**
  * Determine the current thickness of the sample based on kF value and
@@ -158,8 +158,12 @@ vector* LengthWaterLoss(int initial,
     rhow = rho(co, T);
     DestroyChoiOkos(co);
 
+    /* Create a vector to store all the values */
     L = CreateVector(len(Xdb));
 
+    /* If the current row is before the first row we should be using, set the
+     * value equal to the initial thickness. Otherwise, calculate a new
+     * thickness based on the amount of water lost. */
     for(i=0; i<initial; i++)
         setvalV(L, i, L0);
     for(i=initial; i<len(Xdb); i++) {

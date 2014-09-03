@@ -16,3 +16,6 @@
 *.exe
 *.out
 *.app
+
+# Data currently being processed
+data/
