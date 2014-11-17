@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
         puts("Usage:");
         puts("kF <datafile.csv> <Mdry> <Xe>");
         puts("datafile.csv: The file to load data from.");
-        puts("Mdry: The moisture content of the dry sample.");
+        puts("Mdry: The mass of the dry sample.");
         puts("Xe: Optionally supply the equilibrium moisture content.");
         puts("");
         puts("Output is saved to kF<datafile.csv>.");
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     /* Write the calculated values to a csv file. */
     mtxprntfilehdr(data, outfile, "Time [s],Moisture Content [kg/kg db],kF,Thickness [m],Deborah Number,Shrinkage (Water Loss),,Diffusivity,Mass Flux,Momentum Flux\n");
     DestroyMatrix(data);
-    DestroyMaxwell(m);
+    //DestroyMaxwell(m);
 
     return 0;
 }
