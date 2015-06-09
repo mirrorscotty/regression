@@ -132,7 +132,7 @@ double XeModel(double t, matrix *beta)
  *
  * @see fitnlm XeModel CalcXeIt
  */
-double NCalcXe(int initial, matrix *t, matrix *Xdb, double Xe0)
+double NCalcXe(int initial, vector *t, vector *Xdb, double Xe0)
 {
     double Xe = Xe0; /* Set Xe to the initial guess */
     matrix *beta, /* Matrix of fitting values */
@@ -141,27 +141,30 @@ double NCalcXe(int initial, matrix *t, matrix *Xdb, double Xe0)
            *tadj;
     int i; /* Loop index */
 
+    /* Print out the starting row */
+    printf("Starting calculation from row %d.\n", initial);
+
     /* Set the initial moisture content */
-    Xinit = val(Xdb, initial, 0);
+    Xinit = valV(Xdb, initial);
     beta0 = CreateMatrix(2,1);
     setval(beta0, Xe0, 0, 0);
-    setval(beta0, .007, 1, 0);
+    setval(beta0, 4e-6, 1, 0);
 
     /* Make smaller matricies that contain only the "good" data. */
-    tadj = CreateMatrix(nRows(Xdb) - initial, 1);
-    Xadj = CreateMatrix(nRows(Xdb) - initial, 1);
+    tadj = CreateMatrix(len(Xdb) - initial, 1);
+    Xadj = CreateMatrix(len(Xdb) - initial, 1);
 
-    for(i=initial; i<nRows(t); i++) {
-        setval(tadj, val(t, i, 0), i-initial, 0);
-        setval(Xadj, val(Xdb, i, 0), i-initial, 0);
+    for(i=initial; i<len(t); i++) {
+        setval(tadj, valV(t, i), i-initial, 0);
+        setval(Xadj, valV(Xdb, i), i-initial, 0);
     }
 
     /* Actually find Xe */
     beta = fitnlm(&XeModel, tadj, Xadj, beta0);
 
     Xe = val(beta, 0, 0);
-    mtxprnt(beta);
-    mtxprnt(beta0);
+    //mtxprnt(beta);
+    //mtxprnt(beta0);
 
     DestroyMatrix(beta);
     DestroyMatrix(beta0);
@@ -196,7 +199,7 @@ double CalcXeIt(int initial, vector *t, vector *Xdb, double Xe0)
            d2R, /* Second derivative of R^2 */
            kF,
            tol = 1e-7, /* How close Xe and Xep need to be before we stop */
-           h = 1e-10, /* Used for numerical differentiation */
+           h = 1e-7, /* Used for numerical differentiation */
            m = 2; /* Used to increase the rate of convergence */
     matrix *beta, /* Beta value from regress */
            *beta_ph, /* Same, but calculated at Xe + h */
@@ -253,9 +256,11 @@ double CalcXeIt(int initial, vector *t, vector *Xdb, double Xe0)
         tmp_ph = CreateMatrix(2,1);
         setval(tmp_ph, 0, 0, 0);
         setval(tmp_ph, val(beta_ph, 0, 0), 1, 0);
+
         tmp = CreateMatrix(2,1);
         setval(tmp, 0, 0, 0);
         setval(tmp, val(beta, 0, 0), 1, 0);
+
         tmp_mh = CreateMatrix(2,1);
         setval(tmp_mh, 0, 0, 0);
         setval(tmp_mh, val(beta_mh, 0, 0), 1, 0);
@@ -263,6 +268,10 @@ double CalcXeIt(int initial, vector *t, vector *Xdb, double Xe0)
         /* Calculate f and df */
         dR = (rsquared(tadj, yph, tmp_ph) - rsquared(tadj, ymh, tmp_mh))/(2*h);
         d2R = (rsquared(tadj, yph, tmp_ph) - 2*rsquared(tadj, y, tmp) + rsquared(tadj, ymh, tmp_mh))/(h*h);
+        if(d2R == 0) {
+            printf("Terminating due to division by zero.\n");
+            break;
+        }
 
         /* Calculate the new value of Xe */
         Xep = Xe;

@@ -21,7 +21,7 @@ vector* LoadIGASorpXdb(char*, double);
 vector* LoadIGASorpRH(char*);
 
 double CalcXe(int, matrix*, matrix*, double);
-double NCalcXe(int, matrix*, matrix*, double);
+double NCalcXe(int, vector*, vector*, double);
 double CalcXeIt(int, vector*, vector*, double);
 
 double fitsubset(matrix*, matrix*, int, int);

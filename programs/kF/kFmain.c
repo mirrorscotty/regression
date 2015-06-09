@@ -44,7 +44,8 @@ int main(int argc, char *argv[])
         puts("Usage:");
         puts("kF <datafile.csv> <Mdry> <Xe>");
         puts("datafile.csv: The file to load data from.");
-        puts("Mdry: The moisture content of the dry sample.");
+        puts("Mdry: The mass of the dry sample. (in g)");
+        puts("L0: Initial thickness (in mm)");
         puts("Xe: Optionally supply the equilibrium moisture content.");
         puts("");
         puts("Output is saved to kF<datafile.csv>.");
@@ -53,6 +54,7 @@ int main(int argc, char *argv[])
 
     /* Pull the dry mass from the command line arguments */
     Mdry = atof(argv[2]);
+    L0 = atof(argv[3])/1000; /* Convert to meters for calculations */
 
     /* Load all the important information from the IGASorp file.*/
     t = LoadIGASorpTime(argv[1]);
@@ -70,10 +72,10 @@ int main(int argc, char *argv[])
     /* If equilibrium moisture content is supplied, use that value.
      * Otherwise, calculate Xe iteratively. In either case, print out the
      * value. */
-    if(argc == 4)
-        Xe = atof(argv[3]);
+    if(argc == 5)
+        Xe = atof(argv[4]);
     else
-        Xe = CalcXeIt(p0, t, X, .0402);
+        Xe = CalcXeIt(p0, t, X, valV(X, len(X)-1)*.95);
     printf("Xe = %g\n", Xe);
 
     /* Create the filename for the output csv file. It is always
@@ -102,7 +104,7 @@ int main(int argc, char *argv[])
     /* Write the calculated values to a csv file. */
     mtxprntfilehdr(data, outfile, "Time [s],Moisture Content [kg/kg db],kF,Thickness [m],Deborah Number,Shrinkage (Water Loss),,Diffusivity,Mass Flux,Momentum Flux\n");
     DestroyMatrix(data);
-    DestroyMaxwell(m);
+    //DestroyMaxwell(m);
 
     return 0;
 }
