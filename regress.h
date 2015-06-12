@@ -6,6 +6,7 @@
 matrix* regress(matrix*, matrix*);
 matrix* polyfit(matrix*, matrix*, int);
 matrix* fitnlm(double (*)(double, matrix*), matrix*, matrix*, matrix*);
+matrix* fitnlmM(double (*)(matrix *, matrix*), matrix*, matrix*, matrix*);
 double rsquared(matrix*, matrix*, matrix*);
 
 #endif

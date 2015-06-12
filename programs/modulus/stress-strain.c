@@ -13,7 +13,7 @@
 double w;
 
 /**
- * Calculate the imposed strain based on the strain magnitude, oscillation 
+ * Calculate the imposed strain based on the strain magnitude, oscillation
  * frequency, and current time. Frequency is supplied via a global variable.
  * @param e0 Strain magnitude [-]
  * @param t Time [s]
@@ -120,7 +120,7 @@ matrix* fit_stress(double e0, double freq, maxwell *m, double T, double X)
 
     /* Set the global variable to the supplied frequency */
     w = freq;
-    
+
     /* Create matricies for time, strain, and strain rate */
     t = CreateMatrix(npts, 1);
     e = CreateMatrix(npts, 1);
@@ -157,7 +157,7 @@ matrix* fit_stress(double e0, double freq, maxwell *m, double T, double X)
  * @param e0 Strain magnitude
  * @param s0 Stress magnitude
  * @param shift Phase lag
- * @returns Storage modulus 
+ * @returns Storage modulus
  */
 double storage_mod(double e0, double s0, double shift)
 {
@@ -171,7 +171,7 @@ double storage_mod(double e0, double s0, double shift)
  * @param e0 Strain magnitude
  * @param s0 Stress magnitude
  * @param shift Phase lag
- * @returns Loss modulus 
+ * @returns Loss modulus
  */
 double loss_mod(double e0, double s0, double shift)
 {

@@ -25,7 +25,7 @@ double gab(double aw, matrix* beta)
     C = val(beta, 0, 0);
     k = val(beta, 1, 0);
     Xm = val(beta, 2, 0);
-    
+
     Xdb = C*k*Xm*aw/((1-k*aw)*(1-k*aw+C*k*aw));
 
     return Xdb;

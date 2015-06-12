@@ -44,7 +44,7 @@ double CalcXe(int initial, matrix *t, matrix *Xdb, double Xe0)
            r2;
     matrix *beta, /* Matrix of fitting values */
            *y, /* Set equal to ln(X - Xe) */
-           *Xadj, 
+           *Xadj,
            *tadj;
     int i, /* Loop index */
         iter = 0; /* Current iteration */
@@ -137,7 +137,7 @@ double NCalcXe(int initial, vector *t, vector *Xdb, double Xe0)
     double Xe = Xe0; /* Set Xe to the initial guess */
     matrix *beta, /* Matrix of fitting values */
            *beta0,
-           *Xadj, 
+           *Xadj,
            *tadj;
     int i; /* Loop index */
 

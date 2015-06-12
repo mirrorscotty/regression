@@ -37,7 +37,7 @@ vector* MassFlux(int initial, vector *t, vector *Xdb, double Mdry)
         Ji = 0.5*DMwatDt/area;
         /* Calculate the average flux at each data point and save it to the
          * output matrix */
-        for(j=i-NPTS; j<i; j++) 
+        for(j=i-NPTS; j<i; j++)
             setvalV(J, j, Ji/NPTS);
     }
 
@@ -113,7 +113,7 @@ vector* PastaMassFlux(int initial, vector *t, vector *L, double L0, double T)
         v = 0.5*DLDt;
         /* Average out the value over NPTS and set each value equal to the
          * average */
-        for(j=i-NPTS; j<i; j++) 
+        for(j=i-NPTS; j<i; j++)
             setvalV(M, j, v*rhop/NPTS);
     }
 

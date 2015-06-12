@@ -7,7 +7,7 @@ T = x(:,2);
 T = ones(length(T),1) + T;
 
 for i = 1:length(aw)
-    
+
 C = beta(1)*exp(beta(2)/T(i));
 K = beta(3)*exp(beta(4)/T(i));
 Xm = beta(5)*exp(beta(6)/T(i));

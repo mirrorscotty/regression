@@ -103,7 +103,7 @@ double CrankkF(double t, double X, double X0, double Xe, double beta0)
     do {
         /* Calculate f and df */
         f = CrankEquation(kf, t, X0, Xe, nterms) - X;
-        df = (CrankEquation(kf+h, t, X0, Xe, nterms) 
+        df = (CrankEquation(kf+h, t, X0, Xe, nterms)
                 - CrankEquation(kf-h, t, X0, Xe, nterms))/(2*h);
         /* Set old kF value to kfp for checking convergence */
         kfp = kf;

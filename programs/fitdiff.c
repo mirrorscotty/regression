@@ -17,7 +17,8 @@
 #include "isotherms.h"
 
 /**
- * Modified version of the diffusion model from the Handbook of Food Engineering.
+ * Modified version of the diffusion model from the Handbook of Food
+ * Engineering.
  * This function is set up for use with fitnlm().
  * @param Xdb Moisture content [kg/kg db]
  * @param beta A 1x1 matrix containing the value of tau (tortuosity) [-]
@@ -94,10 +95,10 @@ int main(int argc, char *argv[])
     Xdb = ExtractColumn(data, xdbcol);
     D = ExtractColumn(data, dcol);
     //beta0 = CreateMatrix(1, 1);
-    
+
     X = CreateMatrix(nRows(D), 1);
 
-    for(i=0; i<nRows(X); i++) 
+    for(i=0; i<nRows(X); i++)
         setval(X, CalcX(val(Xdb, i, 0), T), i, 0);
 
     //setval(beta0, 3, 0, 0);

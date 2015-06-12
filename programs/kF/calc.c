@@ -53,7 +53,7 @@ double fitsubset(matrix *x, matrix *y, int rowstart, int rowend)
  * @param t Vector of times [s]
  * @param Xdb Vector of moisture contents [kg/kg db]
  * @param Xe Equilibrium moisture content [kg/kg db]
- * @returns Vector of values. Col 1: Time [s], Col 2: Moisture Content 
+ * @returns Vector of values. Col 1: Time [s], Col 2: Moisture Content
  *      [kg/kg db], Col 3: kF [1/s]
  */
 vector* calckf(vector *t, vector *Xdb, double Xe)
@@ -86,7 +86,7 @@ vector* calckf(vector *t, vector *Xdb, double Xe)
  * @param Xdb Column matrix of moisture contents [kg/kg db]
  * @param Xe Equilibrum moisture content [kg/kg db]
  * @param file Filename to save the data to
- * @returns Matrix of values. Col 1: Time [s], Col 2: Moisture Content 
+ * @returns Matrix of values. Col 1: Time [s], Col 2: Moisture Content
  *      [kg/kg db], Col 3: kF [1/s]
  */
 matrix* calckfstep(matrix *t, matrix *Xdb, double Xe)
@@ -103,7 +103,7 @@ matrix* calckfstep(matrix *t, matrix *Xdb, double Xe)
     /* Set the values for X0 and dt. X0 will change with each loop iteration */
     X0 = val(Xdb, 0, 0);
     dt = val(t, 0, 0);
-    
+
     /* Calculate all the kF values */
     for(i=0; i<nRows(kF); i++) {
         kFi = CrankkF(dt, val(Xdb, i, 0), X0, Xe, BETA0);
@@ -114,7 +114,7 @@ matrix* calckfstep(matrix *t, matrix *Xdb, double Xe)
     /* Output data */
     data1 = AugmentMatrix(t, Xdb);
     data2 = AugmentMatrix(data1, kF);
-    
+
     /* Clean up */
     DestroyMatrix(kF);
     DestroyMatrix(data1);
@@ -129,7 +129,7 @@ matrix* calckfstep(matrix *t, matrix *Xdb, double Xe)
  * @param t Vector of time values [s]
  * @param Xdb Vector of moisture contents [kg/kg db]
  * @param file Filename to save the data to
- * @returns Matrix of values. Col 1: Time [s], Col 2: Moisture Content 
+ * @returns Matrix of values. Col 1: Time [s], Col 2: Moisture Content
  *      [kg/kg db], Col 3: kF [1/s]
  */
 matrix* fitkf(matrix *t, matrix *Xdb)

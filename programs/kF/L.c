@@ -122,7 +122,7 @@ vector* LengthConstD(int initial,
         kfi = valV(kF, i);
 
         Li = sqrt(M_PI*M_PI*Dkf0/kfi);
-        
+
         setvalV(L, i, Li);
     }
 

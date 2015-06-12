@@ -20,7 +20,7 @@
  * \f]
  * @param y Column vector of dependent variable values
  * @param X Matrix of independent variable values, one variable per column
- * @returns Column matrix of fitted parameters. Each row corresponds to a 
+ * @returns Column matrix of fitted parameters. Each row corresponds to a
  *      column in the supplies X matrix
  */
 matrix* regress(matrix *y, matrix *X)

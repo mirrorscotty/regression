@@ -20,14 +20,14 @@
  * @param beta Column matrix of fitting parameters
  * @returns Jacobian matrix
  */
-matrix *CalcJacobian(double (*model)(double x, matrix *beta), matrix *x, matrix *beta)
+matrix *CalcJacobianM(double (*model)(matrix *x, matrix *beta), matrix *x, matrix *beta)
 {
     double h = 1e-10, /* Values used for numeric differentiation */
-           Jij, /* i-jth element of the J matrix */
-           xi; /* ith element of the supplied x values */
-    matrix *J; /* Calculating this */
+           Jij; /* i-jth element of the J matrix */
+    matrix *J, /* Calculating this */
+           *xi; /* ith row of the supplied x values */
     int i, j, /* i is the row index for x, and j for beta */
-        nx = nRows(x), /* Number of x values */
+        nx = nRows(x), /* Number of sets of x values */
         nbeta = nRows(beta); /* Number of fitting parameters */
 
     /* Calculate all of the beta(i) + h values and store them for later */
@@ -40,7 +40,7 @@ matrix *CalcJacobian(double (*model)(double x, matrix *beta), matrix *x, matrix 
 
     J = CreateMatrix(nx, nbeta);
     for(i=0; i<nx; i++) {
-        xi = val(x, i, 0);
+        xi = ExtractRow(x, i);
         for(j=0; j<nbeta; j++) {
             /* Calculate the derivative of the model with respect to each
              * parameter. Each row is one x value. */
@@ -48,6 +48,7 @@ matrix *CalcJacobian(double (*model)(double x, matrix *beta), matrix *x, matrix 
             /* Save each Jij value into the J matrix */
             setval(J, Jij, i, j);
         }
+        DestroyMatrix(xi);
     }
 
     /* Get rid of the betah crap we made earlier */
@@ -68,18 +69,20 @@ matrix *CalcJacobian(double (*model)(double x, matrix *beta), matrix *x, matrix 
  * @param y Column vector of dependent values
  * @param beta Column vector of fitting parameters
  */
-matrix* CalcDy(double (*model)(double x, matrix *beta), matrix *x, matrix *y, matrix* beta)
+matrix* CalcDyM(double (*model)(matrix *x, matrix *beta), matrix *x, matrix *y, matrix* beta)
 {
     matrix* dy;
     int i;
-    double yi, xi; /* Individual x and y values */
+    double yi; /* Individual y values */
+    matrix *xi; /* Actual x values */
 
     dy = CreateMatrix(nRows(x), 1);
 
     for(i=0; i<nRows(x); i++) {
         yi = val(y, i, 0); /* Current y value */
-        xi = val(x, i, 0); /* Current x value */
+        xi = ExtractRow(x, i); /* Current x value */
         setval(dy, yi - model(xi, beta), i, 0); /* y - model(x, beta) */
+        DestroyMatrix(xi);
     }
 
     return dy;
@@ -96,7 +99,7 @@ matrix* CalcDy(double (*model)(double x, matrix *beta), matrix *x, matrix *y, ma
  * @param beta0: Matrix of coefficients for the model
  * @returns Column vector of fitted coefficients
  */
-matrix* fitnlm(double (*model)(double x, matrix *beta), matrix *x, matrix *y, matrix *beta0)
+matrix* fitnlmM(double (*model)(matrix* x, matrix *beta), matrix *x, matrix *y, matrix *beta0)
 {
     matrix *J, /* Jacobian */
            *Jt, /* Transpose of J */
@@ -106,7 +109,7 @@ matrix* fitnlm(double (*model)(double x, matrix *beta), matrix *x, matrix *y, ma
            *dbeta; /* Amount beta needs to change by after each iteration */
     /* Maximum amount of changed allowed for a single element of dbeta */
     double tol = .001;
-    int i,
+    int i, /* Loop index */
         maxiter = 500, /* Maximum number of iterations allowed */
         iter = 0; /* Current iteration */
 
@@ -122,8 +125,8 @@ matrix* fitnlm(double (*model)(double x, matrix *beta), matrix *x, matrix *y, ma
             DestroyMatrix(dbeta);
 
         /* Calculate the values of each matrix. */
-        dy = CalcDy(model, x, y, beta);
-        J = CalcJacobian(model, x, beta);
+        dy = CalcDyM(model, x, y, beta);
+        J = CalcJacobianM(model, x, beta);
         Jt = mtxtrn(J);
         A = mtxmul(Jt, J);
         b = mtxmul(Jt, dy);

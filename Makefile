@@ -43,8 +43,13 @@ stress-strain.o: stress-strain.h pasta.h matrix.h
 modulus: fitnlm.o modulus.o stress-strain.o matrix.a material-data.a 
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
+# fitburgers program
+fitburgers.o:
+fitburgers: fitburgers.o fitnlmM.o matrix.a
+
 # regression files in the main directory
 fitnlm.o: regress.h
+fitnlmM.o: regress.h
 regress.o: regress.h
 
 doc: Doxyfile

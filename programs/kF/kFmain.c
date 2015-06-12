@@ -62,13 +62,13 @@ int main(int argc, char *argv[])
     RH = LoadIGASorpRH(argv[1]);
 
     /* Determine the first point to use for equilibrium moisture
-     * content and similar calculations. Values will be calculated 
+     * content and similar calculations. Values will be calculated
      * for rows before this, but they should be disregarded.
      */
     p0 = FindInitialPointRH(RH);
     //p0 = 0;
     printf("Starting calculations from row %d.\n", p0);
-    
+
     /* If equilibrium moisture content is supplied, use that value.
      * Otherwise, calculate Xe iteratively. In either case, print out the
      * value. */

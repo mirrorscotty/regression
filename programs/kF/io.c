@@ -31,7 +31,7 @@ vector* LoadIGASorpTime(char *file)
     /* Clean up */
     DestroyMatrix(data);
     DestroyVector(min);
-    
+
     return t;
 }
 
@@ -66,7 +66,7 @@ vector* LoadIGASorpXdb(char *file, double Mdry)
     /* Clean up */
     DestroyVector(M);
     DestroyMatrix(data);
-    
+
     return Xdb;
 }
 
@@ -90,7 +90,7 @@ vector* LoadIGASorpRH(char *file)
 
     /* Clean up */
     DestroyMatrix(data);
-    
+
     return RH;
 }
 
