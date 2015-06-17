@@ -2,7 +2,7 @@
 #define KF_H
 
 #include "matrix.h"
-#include "mechanical.h"
+#include "material-data.h"
 
 #define CONSTX0 0
 #define CONSTXe 18.261700

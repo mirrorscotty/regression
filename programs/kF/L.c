@@ -4,12 +4,9 @@
  */
 
 #include "kf.h"
-#include "diffusivity.h"
+#include "material-data.h"
 #include <math.h>
-#include "mechanical.h"
 #include "matrix.h"
-#include "choi-okos.h"
-#include "constants.h"
 
 /**
  * Determine the current thickness of the sample based on kF value and

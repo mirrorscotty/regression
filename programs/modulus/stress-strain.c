@@ -5,7 +5,7 @@
  */
 
 #include <math.h>
-#include "pasta.h"
+#include "material-data.h"
 #include "matrix.h"
 #include "regress.h"
 
@@ -81,7 +81,7 @@ matrix* maxwell_stress(maxwell *m, matrix *t, matrix *de,
     for(i=0; i<nRows(t); i++) {
         for(j=0; j<i; j++) {
             stress = 0;
-            stress += MaxwellModulus(m, val(t, j, 0), T, M)
+            stress += MaxwellRelax(m, val(t, j, 0), T, M)
                 * val(de, j, 0) * dt;
         }
         setval(s, stress, i, 0);

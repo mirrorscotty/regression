@@ -19,3 +19,6 @@
 
 # Data currently being processed
 data/
+
+# Make dependencies
+*.d

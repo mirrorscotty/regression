@@ -1,7 +1,11 @@
 CC=gcc
-CFLAGS=-Imatrix -Imaterial-data/choi-okos -Imaterial-data/pasta -I. -ggdb -Wall
+CFLAGS=-Imatrix -Imaterial-data -I. -ggdb -Wall
 LDFLAGS=-lm
 VPATH=matrix material-data material-data/pasta programs programs/kF programs/modulus
+SRC=$(wildcard *.c) \
+	$(wildcard programs/*.c) \
+	$(wildcard programs/kF/*.c) \
+	$(wildcard programs/modulus/*.c)
 
 all: kF gab fitdiff modulus
 
@@ -15,47 +19,43 @@ material-data.a: matrix.a
 	$(MAKE) -C material-data material-data.a
 	cp material-data/material-data.a .
 
-# FOr the kF program
-calc.o: kf.h
-crank.o: kf.h
-io.o: kf.h
-Xe.o: kf.h
-De.o: kf.h
-L.o: kf.h
-flux.o: kf.h
-kFmain.o: kf.h
-kF: calc.o crank.o io.o Xe.o L.o kFmain.o fitnlm.o regress.o De.o flux.o matrix.a material-data.a
+kF: programs/kF/calc.o programs/kF/crank.o programs/kF/io.o programs/kF/Xe.o programs/kF/L.o programs/kF/kFmain.o fitnlm.o regress.o programs/kF/De.o programs/kF/flux.o matrix.a material-data.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # GAB program
-gab.o:
-gab: fitnlm.o gab.o matrix.a
+gab: fitnlm.o programs/gab.o matrix.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # fitdiff program
-fitdiff.o: diffusivity.h isotherms.h constants.h
-fitdiff: fitdiff.o regress.o matrix.a material-data.a
+fitdiff: programs/fitdiff.o regress.o matrix.a material-data.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # modulus program
-modulus.o: stress-strain.h pasta.h matrix.h
-stress-strain.o: stress-strain.h pasta.h matrix.h
-modulus: fitnlm.o modulus.o stress-strain.o matrix.a material-data.a 
+modulus: fitnlm.o programs/modulus/modulus.o programs/modulus/stress-strain.o matrix.a material-data.a 
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # fitburgers program
-fitburgers.o:
-fitburgers: fitburgers.o fitnlmM.o matrix.a
-
-# regression files in the main directory
-fitnlm.o: regress.h
-fitnlmM.o: regress.h
-regress.o: regress.h
+fitburgers: programs/fitburgers.o fitnlmM.o matrix.a
 
 doc: Doxyfile
 	doxygen Doxyfile
 
 clean:
-	rm -rf *.o *.a doc kF gab fitdiff modulus
+	rm -rf doc kF gab fitdiff modulus
+	rm -rf $(SRC:.c=.o)
+	rm -rf $(SRC:.c=.d)
+	rm -rf *.a
 	$(MAKE) -C material-data clean
 	$(MAKE) -C matrix clean
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $*.c -o $*.o
+	$(CC) -MM $(CFLAGS) $*.c > $*.d
+	@mv -f $*.d $*.d.tmp
+	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
+	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
+          sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
+	@rm -f $*.d.tmp
+
+-include $(SRC:.c=.d)
+

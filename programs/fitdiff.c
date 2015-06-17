@@ -12,9 +12,7 @@
 
 #include "matrix.h"
 
-#include "diffusivity.h"
-#include "constants.h"
-#include "isotherms.h"
+#include "material-data.h"
 
 /**
  * Modified version of the diffusion model from the Handbook of Food

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "matrix.h"
-#include "pasta.h"
+#include "material-data.h"
 #include "stress-strain.h"
 
 int main(int argc, char *argv[])

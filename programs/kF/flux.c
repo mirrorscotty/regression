@@ -5,8 +5,7 @@
 
 #include "kf.h"
 #include "matrix.h"
-#include "pasta.h"
-#include "choi-okos.h"
+#include "material-data.h"
 
 #define NPTS 50 /* Number of points to average the flux over */
 
@@ -65,9 +64,9 @@ vector* MomentumFlux(int initial, vector *t,
     for(i=initial; i<len(t); i+=1) {
         ti = valV(tadj, i);
         for(j=initial; j<i; j++) {
-            Mi += MaxwellModulus(m, ti-valV(tadj, j), T, valV(Xdb, j))
+            Mi += MaxwellRelax(m, ti-valV(tadj, j), T, valV(Xdb, j))
                 * (valV(L, j) - valV(L, j-1)) / L0;
-            //printf("G(t) = %g\t", MaxwellModulus(m, ti, T, val(Xdb, j, 0)));
+            //printf("G(t) = %g\t", MaxwellRelax(m, ti, T, val(Xdb, j, 0)));
         }
 
         for(j=i-1; j<i; j++)

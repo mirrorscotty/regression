@@ -1,7 +1,7 @@
 #ifndef STRESS_STRAIN_H
 #define STRESS_STRAIN_H
 
-#include "pasta.h"
+#include "material-data.h"
 #include "matrix.h"
 
 double strain(double, double);

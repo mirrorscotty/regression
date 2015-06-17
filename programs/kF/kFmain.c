@@ -9,7 +9,7 @@
 #include "kf.h"
 #include "matrix.h"
 #include "regress.h"
-#include "mechanical.h"
+#include "material-data.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -3,12 +3,9 @@
  * Calculate Deborah number.
  */
 
-#include "diffusivity.h"
 #include <math.h>
-#include "mechanical.h"
 #include "matrix.h"
-#include "choi-okos.h"
-#include "constants.h"
+#include "material-data.h"
 #include "kf.h"
 
 /**
