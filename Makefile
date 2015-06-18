@@ -37,6 +37,8 @@ modulus: fitnlm.o programs/modulus/modulus.o programs/modulus/stress-strain.o ma
 # fitburgers program
 fitburgers: programs/fitburgers.o fitnlmM.o matrix.a
 
+fitcreep: programs/fitcreep.o regress.o matrix.a
+
 doc: Doxyfile
 	doxygen Doxyfile
 
