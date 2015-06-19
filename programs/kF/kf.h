@@ -38,6 +38,7 @@ vector* DeborahMatrix(int, vector*, vector*, double, double, maxwell*);
 vector* LengthMatrix(int, vector*, vector*, double, double);
 vector* LengthConstD(int, vector*, double, double);
 vector* LengthWaterLoss(int, vector*, double, double, double);
+vector* LengthDensityChange(int, vector*, double, double, double);
 vector* DOswinVector(int, vector*, double);
 
 vector* MassFlux(int, vector*, vector*, double);

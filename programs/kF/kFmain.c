@@ -85,24 +85,25 @@ int main(int argc, char *argv[])
     /* Calculate kF (ratio of diffusivity to length squared) */
     kF = calckf(t, X, Xe);
     /* Determine the length from the kF value and the diffusivity model */
-    L = LengthMatrix(p0, X, kF, L0, T);
+    //L = LengthMatrix(p0, X, kF, L0, T);
     /* Deborah Number */
-    De = DeborahMatrix(p0, X, kF, L0, T, m);
+    //De = DeborahMatrix(p0, X, kF, L0, T, m);
     /* Length change due solely to volume of water lost */
-    Lwat = LengthWaterLoss(p0, X, L0, Mdry*1e-6, T);
+    Lwat = LengthDensityChange(p0, X, L0, Mdry*1e-6, T);
     /* Length change from kF assuming constant diffusivity */
-    Lconst = LengthConstD(p0, kF, L0, T);
+    //Lconst = LengthConstD(p0, kF, L0, T);
     /* Diffusivity (from model) */
     Diff = DOswinVector(p0, X, T);
-    MFlux = MassFlux(p0, t, X, Mdry*1e-6);
-    //MomeFlux = MomentumFlux(p0, t, X, L, T, m);
-    MomeFlux = PastaMassFlux(p0, t, L, L0, T);
+    //MFlux = MassFlux(p0, t, X, Mdry*1e-6);
+    //MomeFlux = PastaMassFlux(p0, t, L, L0, T);
 
     /* Combine all of the vectors for output */
-    data = CatColVector(10, t, X, kF, L, De, Lwat, Lconst, Diff, MFlux, MomeFlux);
+    //data = CatColVector(10, t, X, kF, L, De, Lwat, Lconst, Diff, MFlux, MomeFlux);
 
     /* Write the calculated values to a csv file. */
-    mtxprntfilehdr(data, outfile, "Time [s],Moisture Content [kg/kg db],kF,Thickness [m],Deborah Number,Shrinkage (Water Loss),,Diffusivity,Mass Flux,Momentum Flux\n");
+    //mtxprntfilehdr(data, outfile, "Time [s],Moisture Content [kg/kg db],kF,Thickness [m],Deborah Number,Shrinkage (Water Loss),,Diffusivity,Mass Flux,Momentum Flux\n");
+    data = CatColVector(5, t, X, kF, Lwat, Diff);
+    mtxprntfilehdr(data, outfile, "Time [s],Moisture Content [kg/kg db],kF,Thickness [m],D [m^2/s]");
     DestroyMatrix(data);
     //DestroyMaxwell(m);
 

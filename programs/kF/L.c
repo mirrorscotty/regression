@@ -172,3 +172,36 @@ vector* LengthWaterLoss(int initial,
     return L;
 }
 
+vector* LengthDensityChange(int initial,
+                            vector *Xdb,
+                            double L0,
+                            double Mdry,
+                            double T)
+{
+    double Xdbi, /* Individual moisture content values */
+           rho0, rhoi,
+           X0 = valV(Xdb, initial); /* Initial moisture content */
+    int i; /* Loop index */
+    choi_okos *codry, *co0, *coi; /* Choi-okos values for water density */
+    vector *L; /* Calculated matrix of thicknesses */
+
+    codry = CreateChoiOkos(PASTACOMP);
+    L = CreateVector(len(Xdb));
+    co0 = AddDryBasis(codry, X0);
+    rho0 = rho(co0, T);
+    DestroyChoiOkos(co0);
+
+    for(i=0; i<len(Xdb); i++) {
+        Xdbi = valV(Xdb, i);
+        coi = AddDryBasis(codry, Xdbi);
+        rhoi = rho(coi, T);
+        DestroyChoiOkos(coi);
+
+        setvalV(L, i, rho0/rhoi * L0);
+    }
+
+    DestroyChoiOkos(codry);
+    
+    return L;
+}
+
