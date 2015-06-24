@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
     b = regress(y, X);
     J = ExtractColumnAsVector(b, 0);
 
+    mtxprnt(X);
     PrintVector(tau);
     PrintVector(J);
 

@@ -107,7 +107,7 @@ matrix* fitnlm(double (*model)(double x, matrix *beta), matrix *x, matrix *y, ma
     /* Maximum amount of changed allowed for a single element of dbeta */
     double tol = .001;
     int i,
-        maxiter = 500, /* Maximum number of iterations allowed */
+        maxiter = 5000, /* Maximum number of iterations allowed */
         iter = 0; /* Current iteration */
 
     /* Make a copy of beta so we don't overwrite the supplied values */
@@ -147,6 +147,8 @@ matrix* fitnlm(double (*model)(double x, matrix *beta), matrix *x, matrix *y, ma
          * doesn't look like we're going to come up with an answer */
         if(iter++>maxiter) {
             printf("Maximum number of iterations reached, exiting.\n");
+            DestroyMatrix(beta);
+            beta = CreateMatrix(nRows(beta0), 1);
             break;
         }
     } while(fabs(mtxextrm(dbeta)) > tol); /* Check error */

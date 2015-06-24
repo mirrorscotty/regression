@@ -10,16 +10,13 @@ SRC=$(wildcard *.c) \
 all: kF gab fitdiff modulus
 
 # Make stuff from other projects using their makefile
-matrix.a:
+matrix/matrix.a:
 	$(MAKE) -C matrix matrix.a
-	cp matrix/matrix.a .
 
-material-data.a: matrix.a
-	cp matrix/matrix.a material-data
+material-data/material-data.a: 
 	$(MAKE) -C material-data material-data.a
-	cp material-data/material-data.a .
 
-kF: programs/kF/calc.o programs/kF/crank.o programs/kF/io.o programs/kF/Xe.o programs/kF/L.o programs/kF/kFmain.o fitnlm.o regress.o programs/kF/De.o programs/kF/flux.o matrix.a material-data.a
+kF: programs/kF/calc.o programs/kF/crank.o programs/kF/io.o programs/kF/Xe.o programs/kF/L.o programs/kF/kFmain.o fitnlm.o regress.o programs/kF/De.o programs/kF/flux.o matrix/matrix.a material-data/material-data.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # GAB program
@@ -27,17 +24,18 @@ gab: fitnlm.o programs/gab.o matrix.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # fitdiff program
-fitdiff: programs/fitdiff.o regress.o matrix.a material-data.a
+fitdiff: programs/fitdiff.o regress.o matrix/matrix.a material-data/material-data.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # modulus program
-modulus: fitnlm.o programs/modulus/modulus.o programs/modulus/stress-strain.o matrix.a material-data.a 
+modulus: fitnlm.o programs/modulus/modulus.o programs/modulus/stress-strain.o matrix/matrix.a material-data/material-data.a 
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # fitburgers program
 fitburgers: programs/fitburgers.o fitnlmM.o matrix.a
 
-fitcreep: programs/fitcreep.o regress.o matrix.a
+fitcreep: programs/fitcreep.o regress.o matrix/matrix.a
+nlin-fitcreep: programs/nlin-fitcreep.o fitnlm.o material-data/material-data.a matrix/matrix.a
 
 doc: Doxyfile
 	doxygen Doxyfile
