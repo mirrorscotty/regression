@@ -5,56 +5,29 @@
 #include <stdio.h>
 #include <math.h>
 
-double PronyModel(double t, matrix* beta)
+double PronyModel(double t, matrix* beta, void *params)
 {
     matrix *Ji, *taui;
+    double *p;
     double J0, J, Jval, tauval;
     int n, i;
+    p = (double*) params;
+    J0 = *p;
 
     /* Pull out all the parameter values */
-    J0 = val(beta, 0, 0);
-    n = (nRows(beta)-1)/2;
+    n = nRows(beta)/2;
     Ji = CreateMatrix(n, 1);
     taui = CreateMatrix(n, 1);
 
     for(i=0; i<n; i++) {
-        setval(Ji, val(beta, 2*i+1, 0), i, 0);
-        setval(taui, val(beta, 2*i+2, 0), i, 0);
+        setval(Ji, val(beta, 2*i, 0), i, 0);
+        setval(taui, val(beta, 2*i+1, 0), i, 0);
     }
 
     J = J0;
     for(i=0; i<n; i++) {
-        Jval = val(Ji, i, 0);
-        tauval = val(taui, i, 0);
-        J += Jval * (1-exp(-t/tauval));
-    }
-    DestroyMatrix(Ji);
-    DestroyMatrix(taui);
-    return J;
-}
-double PronyModelSqrt(double t, matrix* beta)
-{
-    matrix *Ji, *taui;
-    double J0, J, Jval, tauval;
-    int n, i;
-
-    /* Pull out all the parameter values */
-    J0 = val(beta, 0, 0);
-    n = (nRows(beta)-1)/2;
-    Ji = CreateMatrix(n, 1);
-    taui = CreateMatrix(n, 1);
-
-    for(i=0; i<n; i++) {
-        setval(Ji, val(beta, 2*i+1, 0), i, 0);
-        setval(taui, val(beta, 2*i+2, 0), i, 0);
-    }
-
-    J = J0*J0;
-    for(i=0; i<n; i++) {
-        Jval = val(Ji, i, 0);
-        Jval = Jval*Jval;
-        tauval = val(taui, i, 0);
-        tauval = tauval*tauval;
+        Jval = val(Ji, i, 0)*val(Ji, i, 0);
+        tauval = val(taui, i, 0)*val(taui, i, 0);
         J += Jval * (1-exp(-t/tauval));
     }
     DestroyMatrix(Ji);
@@ -78,14 +51,21 @@ matrix* makedata(matrix *t, double T, double M)
 
 matrix* fitdata(matrix *t, matrix *J)
 {
+    double J0, Jt;
+    J0 = val(J, 0, 0);
+    Jt = val(J, nRows(J)-1, 0);
+
     matrix *beta0, *beta;
-    beta0 = CreateMatrix(5, 1);
-    setval(beta0, val(J, 0, 0), 0, 0);
-    setval(beta0, .5*(val(J, nRows(J)-1, 0)-val(J, 0, 0)), 1, 0);
-    setval(beta0, 10, 2, 0);
-    setval(beta0, val(beta0, 1, 0), 3, 0);
-    setval(beta0, 100, 4, 0);
-    beta = fitnlm(&PronyModel, t, J, beta0);
+    beta0 = CreateMatrix(4, 1);
+    setval(beta0,
+           sqrt( .5*(Jt-J0) ),
+           0, 0);
+    setval(beta0, sqrt(10), 1, 0);
+    setval(beta0,
+           sqrt( .5*(Jt-J0) ),
+           2, 0);
+    setval(beta0, sqrt(200), 3, 0);
+    beta = fitnlmP(&PronyModel, t, J, beta0, &J0);
     DestroyMatrix(beta0);
     return beta;
 }
@@ -110,10 +90,10 @@ int main(int argc, char *argv[])
     }
     */
 
-    T = linspaceV(293, 363, 10);
-    M = linspaceV(0, .5, 10);
+    T = linspaceV(293, 363, 100);
+    M = linspaceV(0, .5, 100);
 
-    ttmp = linspace(1, 1e3, 1000);
+    ttmp = linspace(1e-3, 1e3, 1000);
     t = mtxtrn(ttmp);
     DestroyMatrix(ttmp);
 
@@ -128,8 +108,9 @@ int main(int argc, char *argv[])
 
             setval(output, Ti, i*len(M)+j, 0);
             setval(output, Mj, i*len(M)+j, 1);
+            setval(output, val(Jij, 0, 0), i*len(M)+j, 2);
             for(k=0; k<nRows(betaij); k++)
-                setval(output, pow(val(betaij, k, 0), 2), i*len(T)+j, k+2);
+                setval(output, pow(val(betaij, k, 0), 2), i*len(T)+j, k+3);
             DestroyMatrix(Jij);
             DestroyMatrix(betaij);
 
