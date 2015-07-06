@@ -72,57 +72,47 @@ matrix* fitdata(matrix *t, matrix *J)
 
 int main(int argc, char *argv[])
 {
-    int i, j, k;
-    double Ti, Mj, percent;
-    vector *T, *M;
-    matrix *t, *Jij, *betaij, *output, *ttmp;
+    int i, j;
+    double T, Mi, percent;
+    vector *M;
+    matrix *t, *Ji, *betai, *output, *ttmp;
 
-    /*
-    if(argc < 3) {
+    if(argc != 2) {
         printf("Usage:\n"
-               "fitcreep: <file> <t1> <t2> ... <tn>\n"
-               "<file>: Filename containing the creep function data.\n"
-               "<t1>: First retardation time\n"
-               "<t2>: Second retardation time\n"
-               "...\n"
-               "<tn>: Nth retardation time.\n");
+               "creep-table: <T>\n"
+               "<T>: Temperature to generate values at. (K)\n");
         exit(0);
     }
-    */
 
-    T = linspaceV(333, 363, 10);
-    M = linspaceV(.05, .4, 10);
+    T = atof(argv[1]);
+    M = linspaceV(.005, .5, 1000);
 
     ttmp = linspace(1e-3, 1e3, 1000);
     t = mtxtrn(ttmp);
     DestroyMatrix(ttmp);
 
-    output = CreateMatrix(len(T)*len(M), 2+5);
+    output = CreateMatrix(len(M), 2+5);
 
-    for(i=0; i<len(T); i++) {
-        Ti = valV(T, i);
-        for(j=0; j<len(M); j++) {
-            Mj = valV(M, j);
-            Jij = makedata(t, Ti, Mj);
-            betaij = fitdata(t, Jij);
+    for(i=0; i<len(M); i++) {
+        Mi = valV(M, i);
+        Ji = makedata(t, T, Mi);
+        betai = fitdata(t, Ji);
 
-            setval(output, Ti, i*len(M)+j, 0);
-            setval(output, Mj, i*len(M)+j, 1);
-            setval(output, val(Jij, 0, 0), i*len(M)+j, 2);
-            for(k=0; k<nRows(betaij); k++)
-                setval(output, pow(val(betaij, k, 0), 2), i*len(T)+j, k+3);
-            DestroyMatrix(Jij);
-            DestroyMatrix(betaij);
+        setval(output, T, i, 0);
+        setval(output, Mi, i, 1);
+        setval(output, val(Ji, 0, 0), i, 2);
+        for(j=0; j<nRows(betai); j++)
+            setval(output, pow(val(betai, j, 0), 2), i, j+3);
+        DestroyMatrix(Ji);
+        DestroyMatrix(betai);
 
-            /* Print the percent done */
-            percent = (1.*i*len(M)+j)/(len(M)*len(T))*100.;
-            printf("%3.2f %%\r", percent);
-            fflush(stdout);
-        }
+        /* Print the percent done */
+        percent = (1.*i)/len(M)*100.;
+        printf("%3.2f %%\r", percent);
+        fflush(stdout);
     }
     
     DestroyMatrix(t);
-    DestroyVector(T);
     DestroyVector(M);
     mtxprntfilehdr(output, "output.csv", "T,M,J0,J1,tau1,J2,tau2\n");
     DestroyMatrix(output);

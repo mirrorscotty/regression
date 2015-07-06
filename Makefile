@@ -37,6 +37,7 @@ fitburgers: programs/fitburgers.o fitnlmM.o matrix.a
 fitcreep: programs/fitcreep.o regress.o matrix/matrix.a
 nlin-fitcreep: programs/nlin-fitcreep.o fitnlm.o material-data/material-data.a matrix/matrix.a
 nlin-fitcreepv2: programs/nlin-fitcreepv2.o fitnlmP.o material-data/material-data.a matrix/matrix.a
+creep-table: programs/creep-table.o fitnlmP.o material-data/material-data.a matrix/matrix.a
 
 doc: Doxyfile
 	doxygen Doxyfile
