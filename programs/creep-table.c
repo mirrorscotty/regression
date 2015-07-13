@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
     double T, Mi, percent;
     vector *M;
     matrix *t, *Ji, *betai, *output, *ttmp;
+    char* outfile;
 
     if(argc != 2) {
         printf("Usage:\n"
@@ -114,8 +115,11 @@ int main(int argc, char *argv[])
     
     DestroyMatrix(t);
     DestroyVector(M);
-    mtxprntfilehdr(output, "output.csv", "T,M,J0,J1,tau1,J2,tau2\n");
+    outfile = (char*) calloc(sizeof(char), 20);
+    sprintf(outfile, "creep-%gK.csv", T);
+    mtxprntfilehdr(output, outfile, "T,M,J0,J1,tau1,J2,tau2\n");
     DestroyMatrix(output);
+    free(outfile);
     return 0;
 }
 

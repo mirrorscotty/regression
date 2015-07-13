@@ -34,6 +34,8 @@ modulus: fitnlm.o programs/modulus/modulus.o programs/modulus/stress-strain.o ma
 # fitburgers program
 fitburgers: programs/fitburgers.o fitnlmM.o matrix.a
 
+add-creep-data: programs/add-creep-data.o matrix/matrix.a material-data/material-data.a
+
 fitcreep: programs/fitcreep.o regress.o matrix/matrix.a
 nlin-fitcreep: programs/nlin-fitcreep.o fitnlm.o material-data/material-data.a matrix/matrix.a
 nlin-fitcreepv2: programs/nlin-fitcreepv2.o fitnlmP.o material-data/material-data.a matrix/matrix.a
