@@ -13,8 +13,11 @@ all: kF gab fitdiff modulus
 matrix/matrix.a:
 	$(MAKE) -C matrix matrix.a
 
-material-data/material-data.a: 
+material-data/material-data.a: force_build
 	$(MAKE) -C material-data material-data.a
+
+force_build:
+	true
 
 kF: programs/kF/calc.o programs/kF/crank.o programs/kF/io.o programs/kF/Xe.o programs/kF/L.o programs/kF/kFmain.o fitnlm.o regress.o programs/kF/De.o programs/kF/flux.o matrix/matrix.a material-data/material-data.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
@@ -33,6 +36,8 @@ modulus: fitnlm.o programs/modulus/modulus.o programs/modulus/stress-strain.o ma
 
 # fitburgers program
 fitburgers: programs/fitburgers.o fitnlmM.o matrix.a
+
+fitachantadiff: programs/fitachantadiff.o fitnlmM.o matrix.a material-data.a
 
 add-creep-data: programs/add-creep-data.o matrix/matrix.a material-data/material-data.a
 

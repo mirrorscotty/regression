@@ -108,7 +108,7 @@ matrix* fitnlmM(double (*model)(matrix* x, matrix *beta), matrix *x, matrix *y, 
            *beta, /* Current values for the fitting parameters */
            *dbeta; /* Amount beta needs to change by after each iteration */
     /* Maximum amount of changed allowed for a single element of dbeta */
-    double tol = .001;
+    double tol = .001, M;
     int i, /* Loop index */
         maxiter = 500, /* Maximum number of iterations allowed */
         iter = 0; /* Current iteration */
@@ -135,9 +135,11 @@ matrix* fitnlmM(double (*model)(matrix* x, matrix *beta), matrix *x, matrix *y, 
          * are. */
         dbeta = SolveMatrixEquation(A, b);
 
+        M = 1; /* Slow down convergence so we don't overshoot */
+
         /* beta = beta + dbeta */
         for(i=0; i<nRows(beta); i++)
-            addval(beta, val(dbeta, i, 0), i, 0);
+            addval(beta, M*val(dbeta, i, 0), i, 0);
 
         /* Delete all the clutter we created */
         DestroyMatrix(J);
