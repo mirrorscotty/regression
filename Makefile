@@ -34,6 +34,12 @@ fitdiff: programs/fitdiff.o regress.o matrix/matrix.a material-data/material-dat
 modulus: fitnlm.o programs/modulus/modulus.o programs/modulus/stress-strain.o matrix/matrix.a material-data/material-data.a 
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
+modulus-rozzi: fitnlm.o programs/modulus/stress-strain.o programs/modulus/modulus-rozzi.o programs/modulus/stress-strain-rozzi.o matrix/matrix.a material-data/material-data.a 
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+modulus-sweep: fitnlm.o programs/modulus/stress-strain.o programs/modulus/modulus-rozzi-sweep.o programs/modulus/stress-strain-rozzi.o matrix/matrix.a material-data/material-data.a 
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
 # fitburgers program
 fitburgers: programs/fitburgers.o fitnlmM.o matrix.a
 
