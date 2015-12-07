@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     T = ExtractColumnAsVector(data, tempcol);
     Xdb = ExtractColumnAsVector(data, xdbcol);
     y = ExtractColumn(data, deffcol);
-    beta0 = ParseMatrix("[1.78e-5;36543.88;1.47e-10]");
+    beta0 = ParseMatrix("[1.78e-5;36543.88;1e-10]");
     for(i=0; i<nRows(beta0); i++)
         setval(beta0, sqrt(val(beta0, i, 0)), i, 0);
 
@@ -45,9 +45,10 @@ int main(int argc, char *argv[])
 
     beta = fitnlmM(&AchantaDiffModel, X, y, beta0);
 
-    printf("D0: %g\nEa: %g\nDvap: %g\n",
+    printf("D0: %g\nEa: %g\nD1: %g\nD2: %g\n",
             pow(val(beta, 0, 0), 2),
             pow(val(beta, 1, 0), 2),
+            pow(val(beta, 2, 0), 2),
             pow(val(beta, 2, 0), 2));
 
     DestroyMatrix(beta);

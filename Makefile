@@ -26,6 +26,10 @@ kF: programs/kF/calc.o programs/kF/crank.o programs/kF/io.o programs/kF/Xe.o pro
 gab: fitnlm.o programs/gab.o matrix.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
+# GAB program
+oswin: fitnlmM.o programs/oswin.o matrix.a
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
 # fitdiff program
 fitdiff: programs/fitdiff.o regress.o matrix/matrix.a material-data/material-data.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
