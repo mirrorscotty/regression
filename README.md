@@ -2,6 +2,7 @@ regression
 ==========
 * Author: Alex Griessman (alex.griessman@gmail.com)
 * Repository: https://github.com/mirrorscotty/regression
+
 This repository contains the following functions:
 * regress: Linear regression
 * polyfit: Linear regression for polynomial functions
